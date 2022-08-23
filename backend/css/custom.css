@@ -1,0 +1,31 @@
+/* Container needed to position the button. Adjust the width as needed */
+.img-container {
+    position: relative;
+  }
+
+
+
+  /* Style the button and place it in the middle of the img-container/image */
+  .img-container .btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #555;
+    color: white;
+    font-size: 12px;
+    padding: 4px 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    display: block;
+  }
+
+  .txt-dark:hover > .icon-trash{
+      color: #ffff;
+  }
+
+  .blue-color{
+    color: #0071BD !important       ;
+  }

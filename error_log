@@ -1,0 +1,24 @@
+[06-Aug-2022 19:34:24 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function info() in /home/corespl/login.corespl.com/index.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/corespl/login.corespl.com/index.php on line 2
+[06-Aug-2022 19:34:50 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function info() in /home/corespl/login.corespl.com/index.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/corespl/login.corespl.com/index.php on line 2
+[06-Aug-2022 19:34:52 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function info() in /home/corespl/login.corespl.com/index.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/corespl/login.corespl.com/index.php on line 2
+[06-Aug-2022 19:36:58 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function info() in /home/corespl/login.corespl.com/index.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/corespl/login.corespl.com/index.php on line 2
+[06-Aug-2022 19:37:01 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function info() in /home/corespl/login.corespl.com/index.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/corespl/login.corespl.com/index.php on line 2
+[08-Aug-2022 15:02:50 UTC] PHP Warning:  require(/home/corespl/login.corespl.com/jsdgdshfewiqruqwrujdfhsxzmv/vendor/autoload.php): failed to open stream: No such file or directory in /home/corespl/login.corespl.com/index.php on line 34
+[08-Aug-2022 15:02:50 UTC] PHP Fatal error:  require(): Failed opening required '/home/corespl/login.corespl.com/jsdgdshfewiqruqwrujdfhsxzmv/vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/corespl/login.corespl.com/index.php on line 34
+[08-Aug-2022 15:03:01 UTC] PHP Warning:  require(/home/corespl/login.corespl.com/jsdgdshfewiqruqwrujdfhsxzmv/vendor/autoload.php): failed to open stream: No such file or directory in /home/corespl/login.corespl.com/index.php on line 34
+[08-Aug-2022 15:03:01 UTC] PHP Fatal error:  require(): Failed opening required '/home/corespl/login.corespl.com/jsdgdshfewiqruqwrujdfhsxzmv/vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/corespl/login.corespl.com/index.php on line 34
