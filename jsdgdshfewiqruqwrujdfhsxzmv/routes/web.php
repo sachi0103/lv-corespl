@@ -53,7 +53,8 @@ Route::get('/', function () {
 });
 
 
-Route::get('/test', [App\Http\Controllers\Backend\DashboardController::class, 'test'])->name('test');
+Route::get('/welcome', [App\Http\Controllers\Backend\DashboardController::class, 'welcome'])->name('welcome');
+Route::post('/authenticate', [App\Http\Controllers\AuthController::class, 'authenticate'])->name('authenticate');
 Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(function () {
 
 
@@ -69,8 +70,6 @@ Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(functio
 
 
     Route::resource('/accounts', AccountController::class);
-
-    // Route::resource('/packages', PackageController::class);
 
     Route::get('/accounts/transaction/success', [AccountController::class, 'success'])->name('accounts.transaction.success');
 

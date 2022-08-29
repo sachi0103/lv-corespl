@@ -47,7 +47,7 @@ class DashboardController extends Controller
     }
 
 
-    public function test()
+    public function welcome()
 
     {
         return view('backend.auth.adminlogin');
