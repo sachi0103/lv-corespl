@@ -1,0 +1,136 @@
+@extends('backend.layouts.authentication.master')
+
+@section('title', 'Login | High Streeting')
+
+@section('content')
+
+<div class="container-fluid">
+
+   <div class="row">
+
+      <div class="col-xl-6"><img class="bg-img-cover bg-center" src="{{asset('backend/images/login/login-banner.png')}}" alt="looginpage"></div>
+
+      <div class="col-xl-6 p-0">
+
+         <div class="login-card">
+
+            <div>
+
+               <div>
+
+                   <a class="logo text-left" href="{{ route('login') }}">
+
+                        <img class="img-fluid for-light" src="{{asset('backend/images/logo/logo.jpeg')}}" alt="looginpage" width="300">
+
+                        <img class="img-fluid for-dark" src="{{asset('backend/images/logo/logo.jpeg')}}" alt="looginpage" width="300">
+
+                    </a>
+
+                </div>
+
+               <div class="login-main">
+
+                  <form class="theme-form needs-validation"  method="POST" action="{{ route('login') }}" novalidate="">
+
+                      @csrf
+
+                     <h4> Welcome back:</h4>
+
+                     <div class="form-group">
+
+                        <label><b>atifhs@hotmail.com</b></label>
+
+                     </div>
+
+                     <h4> Please enter you below to verify your account:</h4>
+
+                     <div class="form-group">
+
+                        <label class="col-form-label">Password</label>
+
+                        <input class="form-control @error('password') border-danger @enderror" type="password" name="password" required="" placeholder="*********">
+
+                        <div class="show-hide"><span class="show"></span></div>
+
+                        @error('password')
+
+                        <span class="form-text text-danger">{{ $message }}</span>
+
+                        @enderror
+
+                        <div class="invalid-tooltip">Please enter password.</div>
+
+                     </div>
+
+                     <div class="form-group mb-0">
+
+                        <div class="checkbox p-0">
+
+                           <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+
+                           <label class="text-muted" for="checkbox1">Remember password</label>
+
+                        </div>
+
+                        <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+
+                     </div>
+
+                     {{-- <p class="mt-4 mb-0"><a class="ml-2" href="{{ route('password.request') }}">Forgot password?</a></p> --}}
+
+                  </form>
+
+               </div>
+
+            </div>
+
+         </div>
+
+      </div>
+
+   </div>
+
+</div>
+
+@endsection
+
+@push('scripts')
+
+<script>
+
+    (function() {'use strict';
+
+    window.addEventListener('load', function() {
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+
+    var forms = document.getElementsByClassName('needs-validation');
+
+    // Loop over them and prevent submission
+
+    var validation = Array.prototype.filter.call(forms, function(form) {
+
+    form.addEventListener('submit', function(event) {
+
+    if (form.checkValidity() === false) {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    }
+
+    form.classList.add('was-validated');
+
+    }, false);
+
+    });
+
+    }, false);
+
+})();
+
+</script>
+
+@endpush
+
