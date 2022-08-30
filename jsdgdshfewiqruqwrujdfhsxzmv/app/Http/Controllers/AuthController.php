@@ -10,7 +10,6 @@ class AuthController extends Controller
 {
     public function authenticate(Request $request)
     {
-        //dd($request);
         $attempt = Auth::attempt([
             'email' => $request->get('email'), 
             'password' => $request->get('password'), 

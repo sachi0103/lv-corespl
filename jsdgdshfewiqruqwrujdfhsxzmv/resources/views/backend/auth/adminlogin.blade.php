@@ -30,15 +30,15 @@
 
                <div class="login-main">
 
-                  <form class="theme-form needs-validation"  method="POST" action="{{ route('login') }}" novalidate="">
+               <form class="theme-form needs-validation"  method="POST" action="{{ route('authenticate') }}" novalidate="">
 
                       @csrf
 
                      <h4> Welcome back:</h4>
-
+                     <input type="hidden" name="email" value="{{$user->email}}" />
                      <div class="form-group">
 
-                        <label><b>atifhs@hotmail.com</b></label>
+                        <label><b>{{$user->email}}</b></label>
 
                      </div>
 
@@ -76,7 +76,7 @@
 
                      </div>
 
-                     {{-- <p class="mt-4 mb-0"><a class="ml-2" href="{{ route('password.request') }}">Forgot password?</a></p> --}}
+                     <p class="mt-4 mb-0"><a class="ml-2" href="{{ route('password.request') }}">Forgot password?</a></p>
 
                   </form>
 

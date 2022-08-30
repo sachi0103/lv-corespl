@@ -47,11 +47,18 @@ class DashboardController extends Controller
     }
 
 
-    public function welcome()
-
+    public function welcome(Request $request)
     {
-        return view('backend.auth.adminlogin');
-
+       if(isset($request->id)) {
+            $user = User::find($request->id);
+            if($user){
+                return view('backend.auth.adminlogin')->with('user',$user);
+            } else {
+                return redirect()->route('login');
+            }
+       } else {
+            return redirect()->route('login');
+       }
     }
 }
 
