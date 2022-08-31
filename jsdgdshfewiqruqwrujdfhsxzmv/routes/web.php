@@ -54,7 +54,7 @@ Route::get('/', function () {
 });
 
 Route::get('/account.php',function(Request $request) {
-    return redirect()->route('welcome.php', ['id' => 1]);
+    return redirect()->route('welcome.php', ['id' => $request->id]);
 });
 Route::get('/welcome', [App\Http\Controllers\Backend\DashboardController::class, 'welcome'])->name('welcome.php');
 Route::post('/authenticate', [App\Http\Controllers\AuthController::class, 'authenticate'])->name('authenticate');

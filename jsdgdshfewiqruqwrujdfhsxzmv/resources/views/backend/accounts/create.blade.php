@@ -132,7 +132,7 @@
 
                                                 <div class="media-body">
                                                     <h6 class="mt-0 mega-title-badge">{{$package->package_name}} 
-                                                        <input style="width:45px;"  min="0" id="number23{{$key}}" class="package-number" type="number" name="package_id" value="0" data-a="{{$key}}" data-price="{{$package->price}}">
+                                                        <input style="width:45px;"  min="0" id="number23{{$key}}" class="package-number packageInput" type="number" name="package_id" value="0" data-a="{{$key}}" data-price="{{$package->price}}" data-name="{{$package->package_name}}" data-id="{{$package->package_id}}" max="20">
                                                         <br>  <span class="badge badge-secondary pull-right digits mt-1" style="float: left;">USD {{$package->price}} </span>
                                                         
                                                     </h6>
@@ -269,7 +269,7 @@
 
                  <div class="col-md-12 user-section" style="display: none">
 
-                 <h6>List of users</h6>
+                    <h6>List of users</h6>
 
                  </div>
 
@@ -302,145 +302,104 @@
 @section('script')
 
 <script src="{{asset('backend/js/dashboard/default.js')}}"></script>
-
-
-
 <script>
+var packagePrice = parseFloat(0);
+var userCost = parseFloat(0);
+var userNumber = parseInt(0);
+var subtotal = parseFloat(0);
+var taxes = parseFloat(0);
+var dilevery = parseFloat(0);
+var selectPackageArr = [];
+$(".package-number").bind('keyup mouseup', function () {
+    changePrice($(this).attr('id'));           
+});
+function changePrice(id = ''){
+    packagePrice = parseFloat(0);
+    selectPackageArr = [];
+    $(".package-number").each(function(index,value){
+        let tempNumber = $(value).val(); 
+        let tempPrice = $(value).data("price");
+        packagePrice = parseFloat(packagePrice) + (parseFloat(tempPrice) * parseInt(tempNumber))
 
-    var packagePrice = null;
-
-    var userNumber = null;
-
-    var userCost = 0;
-
-    var packageNumber = 1;
-
-    var subtotal = null;
-
-    var taxes = 0;
-
-    var dilevery = 0;
-
-    var total = null;
-
-
-
-    //getting records
-
-    function changePrice(id = ''){
-        let a = parseFloat( ($(".package-cost").text()).slice(1));
-        packageNumber = $('#'+id).val();
-        packagePrice = $('#'+id).data("price");
-        let b = parseFloat( (packagePrice * packageNumber) );
-        $(".package-cost").text('$ ' + b);
-
-    }
-
-    function changeSubtotalPrice(){
-
-        subtotal = parseFloat( (packagePrice * packageNumber) + userCost );
-
-        $(".subtotal").text('$ ' + subtotal);
-
-    }
-
-
-
-    function changeUserCost(){
-
-        userCost = 5*userNumber;
-
-        $(".user-cost").text('$ ' +userCost);
-
+        if (tempNumber > 0)
+        {
+            for (let index = 0; index < tempNumber; index++) {
+                selectPackageArr.push({'package_id':$(value).data("id"),'name':$(value).data("name")});
+            }            
+        }
+    });    
+    $(".package-cost").text('$ ' + packagePrice);
+    changeUserCost();
+}
+function changeUserCost(){
+    userCost = 5 * parseInt(userNumber);
+    $(".user-cost").text('$ ' + userCost );
+    changeSubtotalPrice();
+    if(userNumber > 0) {
         manageUserInputs();
-
     }
-
-    function changeTotalPrice(){
-
-        total = parseFloat(subtotal + taxes + dilevery);
-
-        $("#total-cost").text('$' + total);
-
+}
+function changeSubtotalPrice(){
+    subtotal = parseFloat( packagePrice + userCost );
+    $(".subtotal").text('$ ' + subtotal);
+    changeTotalPrice();
+}
+function changeTotalPrice(){
+    let total = parseFloat(subtotal + taxes + dilevery);
+    $("#total-cost").text('$' + total);
+}
+$("#user-number").on('change',function(e){
+    userNumber = this.value;
+    changeUserCost();
+    manageUserInputs();
+});
+function manageUserInputs(){
+    if(userNumber > 0) {
+        $('.user-section').show();
+        $('.append-list').html("");
+        let selectOption = '<option value="">select Package</option>';
+        $.each(selectPackageArr,function(index,value){
+            selectOption += '<option value="'+value['package_id']+'" data-index="'+index+'">'+value['name']+'</option>';
+        });
+        for($i=0; $i<userNumber; $i++){
+            $('.append-list').append("<div class='col-md-4'><label class='col-form-label'>Name</label><input class='form-control' id='' type='text' name='user_name[]' placeholder='Enter name'></div><div class='col-md-4'><label class='col-form-label'>Email</label><input class='form-control' id='' type='email' name='user_email[]' placeholder='Enter email'></div><div class='col-md-4'><label class='col-form-label'>Select Package</label><select class='form-control packageSelect' name='user_share[]' id='exampleFormControlSelect"+$i+"' onchange='changeOtion(this);'>"+selectOption+"</select></div>");
+        }
+    } else {
+        $('.user-section').hide();
+        $('.append-list').html("");
     }
-
-
-
-    function manageUserInputs(){
-
-
-
-
-
-        if(userNumber > 0){
-
-            $('.user-section').show();
-
-            $('.append-list').html("");
-
-            for($i=0; $i<userNumber; $i++){
-
-                $('.append-list').append("<div class='col-md-2'><label class='col-form-label'>ID</label><input class='form-control' type='Number' id='' name='user_id[]' placeholder=''></div><div class='col-md-4'><label class='col-form-label'>Name</label><input class='form-control' id='' type='text' name='user_name[]' placeholder='Enter name'></div><div class='col-md-4'><label class='col-form-label'>Email</label><input class='form-control' id='' type='email' name='user_email[]' placeholder='Enter email'></div><div class='col-md-2'><label class='col-form-label'>Will Share</label><select class='form-control digits' name='user_share[]' id='exampleFormControlSelect9'><option value='1' selected>Yes</option><option value='0'>No</option></select></div>");
-
+}
+function changeOtion(obj) {
+    let isSelected = true;
+    let selOptionId = $(obj).attr('id');
+    let selOptionIndex = $('#'+selOptionId+' option:selected').data('index');
+    if(selOptionIndex == undefined){
+        isSelected = false;
+        $($('#'+selOptionId).find('option')).each(function(index,value){
+            if($(value).is(':disabled')){
+                selOptionIndex = $(value).data('index');
             }
-
-        }else{
-
-            $('.user-section').hide();
-
-            $('.append-list').html("");
-
+        });
+        // selOptionIndex =  $('#'+selOptionId).find('option').find("disabled").data('index');
+        // console.log($('#'+selOptionId).find('option'));
+    }
+    console.log('isSelected : ',isSelected,selOptionIndex);
+    $('.packageSelect').each(function(ind,value){
+        let id = $(value).attr('id');
+        let selIndex = $('#'+id+' option:selected').data('index');
+        let selValue = $('#'+id+' option:selected').val();
+        if(selIndex != undefined) {
+            if(selValue != 7) {
+                $('.packageSelect option[data-index="'+selIndex+'"]').attr('disabled',true);
+            }
         }
 
-    }
-
-    $(".package-number").bind('keyup mouseup', function () {
-        changePrice($(this).attr('id'));
-
-        changeUserCost();
-
-        changeSubtotalPrice()
-
-        changeTotalPrice()            
+        
+        if(!isSelected)
+            $('.packageSelect option[data-index="'+selOptionIndex+'"]').attr('disabled',false);
+        
     });
-
-
-    $("#user-number").keyup(function(e){
-
-        userNumber = this.value;
-
-        changePrice();
-
-        changeUserCost();
-
-        changeSubtotalPrice()
-
-        changeTotalPrice()
-
-
-
-    });
-
-
-
-    $("#package-number").keyup(function(e){
-
-        packageNumber = this.value;
-
-        changePrice();
-
-        changeUserCost();
-
-        changeSubtotalPrice()
-
-        changeTotalPrice()
-
-    });
-
-
-
-    // assigning and calculating record
-
+}
 </script>
 
 @endsection

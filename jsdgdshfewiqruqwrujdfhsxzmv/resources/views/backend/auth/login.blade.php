@@ -31,7 +31,8 @@
                <div class="login-main">
 
                   <form class="theme-form needs-validation"  method="POST" action="{{ route('authenticate') }}" novalidate="">
-
+                     
+                        <input type="hidden" value="1" name="is_admin" />
                       @csrf
 
                      <h4>Sign in to account</h4>
