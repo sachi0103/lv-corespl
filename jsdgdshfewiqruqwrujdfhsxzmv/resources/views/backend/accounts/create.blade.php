@@ -131,16 +131,21 @@
                                                 </div> -->
 
                                                 <div class="media-body">
-                                                    <h6 class="mt-0 mega-title-badge">{{$package->package_name}} 
-                                                        <input style="width:45px;"  min="0" id="number23{{$key}}" class="package-number packageInput" type="number" name="package_id" value="0" data-a="{{$key}}" data-price="{{$package->price}}" data-name="{{$package->package_name}}" data-id="{{$package->package_id}}" max="20">
-                                                        <br>  <span class="badge badge-secondary pull-right digits mt-1" style="float: left;">USD {{$package->price}} </span>
-                                                        
-                                                    </h6>
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+                                                            <h6 class="mt-0 mega-title-badge">{{$package->package_name}} 
+                                                                <br>  <span class="badge badge-secondary pull-right digits mt-1" style="float: left;">USD {{$package->price}} </span>
+                                                            </h6>
+                                                            <br>
+                                                            <p class="mt-1">Package Type: {{$package->package_type}}</p>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label><b>Qty:</b></label>
+                                                            <input type="hidden" name="package_id[]" value="{{$package->package_id}}" />
+                                                            <input style="width:45px;border: solid #000 1px;"  min="0" id="number23{{$key}}" class="package-number packageInput" type="number" name="package_qty[]" value="0" data-a="{{$key}}" data-price="{{$package->price}}" data-name="{{$package->package_name}}" data-id="{{$package->package_id}}" max="20">
+                                                        </div>
+                                                    </div>                                                    
                                                     
-                                                    <br>
-                                                    
-                                                    <p class="mt-1">Package Type: {{$package->package_type}}</p>
-
                                                 </div>
 
                                             </div>
@@ -231,9 +236,9 @@
 
                     <div class="col-md-6">
 
-                        <label class="col-form-label">Number of selected user</label>
+                        <label class="col-form-label">Number of Employees</label>
 
-                        <input class="form-control" id="user-number" type="Number" name="number_of_selected_user" placeholder="Enter user number">
+                        <input class="form-control" id="user-number" type="Number" name="number_of_selected_user" placeholder="Enter Number of Employees">
 
                     </div>
 
@@ -285,7 +290,7 @@
 
        <div class="card-footer">
 
-        <button class="btn btn-secondary">Submit</button>
+        <button class="btn btn-secondary">Next</button>
 
     </div>
 
@@ -362,7 +367,7 @@ function manageUserInputs(){
             selectOption += '<option value="'+value['package_id']+'" data-index="'+index+'">'+value['name']+'</option>';
         });
         for($i=0; $i<userNumber; $i++){
-            $('.append-list').append("<div class='col-md-4'><label class='col-form-label'>Name</label><input class='form-control' id='' type='text' name='user_name[]' placeholder='Enter name'></div><div class='col-md-4'><label class='col-form-label'>Email</label><input class='form-control' id='' type='email' name='user_email[]' placeholder='Enter email'></div><div class='col-md-4'><label class='col-form-label'>Select Package</label><select class='form-control packageSelect' name='user_share[]' id='exampleFormControlSelect"+$i+"' onchange='changeOtion(this);'>"+selectOption+"</select></div>");
+            $('.append-list').append("<div class='col-md-4'><label class='col-form-label'>Name</label><input class='form-control' id='' type='text' name='user_name[]' placeholder='Enter name'></div><div class='col-md-4'><label class='col-form-label'>Email</label><input class='form-control' id='' type='email' name='user_email[]' placeholder='Enter email'></div><div class='col-md-4'><label class='col-form-label'>Select Package</label><input type='hidden' name='user_package[]' id='user"+$i+"' /><select class='form-control packageSelect' name='user_share[]' id='exampleFormControlSelect"+$i+"' data-main='"+$i+"' onchange='changeOtion(this);'>"+selectOption+"</select></div>");
         }
     } else {
         $('.user-section').hide();
@@ -373,6 +378,8 @@ function changeOtion(obj) {
     let isSelected = true;
     let selOptionId = $(obj).attr('id');
     let selOptionIndex = $('#'+selOptionId+' option:selected').data('index');
+    let index = $(obj).data('main');
+    $('#user'+index).val($('#'+selOptionId+' option:selected').val());
     if(selOptionIndex == undefined){
         isSelected = false;
         $($('#'+selOptionId).find('option')).each(function(index,value){
@@ -380,10 +387,7 @@ function changeOtion(obj) {
                 selOptionIndex = $(value).data('index');
             }
         });
-        // selOptionIndex =  $('#'+selOptionId).find('option').find("disabled").data('index');
-        // console.log($('#'+selOptionId).find('option'));
     }
-    console.log('isSelected : ',isSelected,selOptionIndex);
     $('.packageSelect').each(function(ind,value){
         let id = $(value).attr('id');
         let selIndex = $('#'+id+' option:selected').data('index');
