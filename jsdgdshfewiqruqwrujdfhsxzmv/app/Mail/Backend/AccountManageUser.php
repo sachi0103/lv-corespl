@@ -64,7 +64,7 @@ class AccountManageUser extends Mailable
         ->markdown('backend.emails.account-manage')
 
         ->with('data', $this->data);
-
+        
     }
 
 }

@@ -255,7 +255,7 @@
     <body class="clean-body" style="margin: 0; padding: 0; -webkit-text-size-adjust: 100%; background-color: #e2eace;">
             <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:15px;line-height:107%;font-family:"Arial",sans-serif;color:#1D1C1D;'>Hello,</span></p>
             <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'><span style='font-size:15px;line-height:107%;font-family:"Arial",sans-serif;color:#1D1C1D;'>I we have sending the {{$data['user_name']}} account package details,</span></p>
-            <table style="width:100%">
+            <table style="width:80%">
                 <tr>
                     <td> No Of Employee : <td>
                     <td> {{$data['number_of_selected_user']}} <td>
@@ -273,7 +273,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <table style="width:100%">
+                        <table style="width:100%"  border="1">
                             <tr>
                                 <td> Package Name <td>
                                 <td> Package Qty<td>
@@ -296,7 +296,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <table style="width:100%">
+                        <table style="width:100%"  border="1">
                             <tr>
                                 <td> Name <td>
                                 <td> Email <td>
