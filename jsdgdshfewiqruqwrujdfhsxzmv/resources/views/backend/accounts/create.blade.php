@@ -68,7 +68,7 @@
 
        </div>
 
-       <form action="{{route('admin.accounts.store')}}" method="post">
+       <form action="{{route('admin.accounts.store')}}" method="post" id="myform">
 
         @csrf
 
@@ -112,23 +112,17 @@
 
                             <div class="height-equal">
 
-                                <div class="row">
+                                <div class="row" id="packageList">
 
-                                    @forelse ($packages as $key => $package )
+                                    @foreach ($packages as $key => $package )
+                                    
+                                    @if (strtolower($countries[0]->Name) == strtolower($package->call_country))
 
                                     <div class="col-sm-6">
 
                                         <div class="card">
 
                                             <div class="media p-20">
-
-                                                <!-- <div class="radio radio-primary mr-3">
-
-                                                    <input id="radio23{{$key}}" class="package-radio" type="radio" name="package_id" value="{{$package->package_id}}" data-price="{{$package->price}}">
-
-                                                    <label for="radio23{{$key}}"></label>
-
-                                                </div> -->
 
                                                 <div class="media-body">
                                                     <div class="row">
@@ -142,7 +136,7 @@
                                                         <div class="col-md-4">
                                                             <label><b>Qty:</b></label>
                                                             <input type="hidden" name="package_id[]" value="{{$package->package_id}}" />
-                                                            <input style="width:45px;border: solid #000 1px;"  min="0" id="number23{{$key}}" class="package-number packageInput" type="number" name="package_qty[]" value="0" data-a="{{$key}}" data-price="{{$package->price}}" data-name="{{$package->package_name}}" data-id="{{$package->package_id}}" max="20">
+                                                            <input style="width:45px;border: solid #000 1px;"  min="0" id="number23{{$key}}" class="package-number packageInput" onchange="changePrice('number23{{$key}}');" type="number" name="package_qty[]" value="0" data-a="{{$key}}" data-price="{{$package->price}}" data-name="{{$package->package_name}}" data-id="{{$package->package_id}}" max="20">
                                                         </div>
                                                     </div>                                                    
                                                     
@@ -154,9 +148,9 @@
 
                                     </div>
 
-                                    @empty
+                                    @endif
 
-                                    @endforelse
+                                    @endforeach
 
                                 </div>
 
@@ -315,8 +309,46 @@ var subtotal = parseFloat(0);
 var taxes = parseFloat(0);
 var dilevery = parseFloat(0);
 var selectPackageArr = [];
+var PackageList = <?php echo  (count($packages) > 0) ? json_encode($packages) : ''; ?>;
 $(".package-number").bind('keyup mouseup', function () {
     changePrice($(this).attr('id'));           
+});
+$('#exampleFormControlSelect9').on('change',function(){
+    let country = ($('#exampleFormControlSelect9 option:selected').text()).toLowerCase();
+    
+    let filterPackage = PackageList.filter( function(value,index) {
+        return (country == (value['call_country']).toLowerCase())
+        //console.log(value['call_country']);
+    } );
+
+    let packageList = '';
+    $.each(filterPackage,function(index,value){
+        packageList += '<div class="col-sm-6">'+
+                            '<div class="card">'+
+                                '<div class="media p-20">'+
+                                    '<div class="media-body">'+
+                                        '<div class="row">'+
+                                            '<div class="col-md-8">'+
+                                                '<h6 class="mt-0 mega-title-badge">'+value['package_name'] +
+                                                    '<br>  <span class="badge badge-secondary pull-right digits mt-1" style="float: left;">USD '+value['price']+' </span>'+
+                                                '</h6>'+
+                                                '<br>'+
+                                                '<p class="mt-1">Package Type: '+value['package_type']+'</p>'+
+                                            '</div>'+
+                                            '<div class="col-md-4">'+
+                                                '<label><b>Qty:</b></label>'+
+                                                '<input type="hidden" name="package_id[]" value="'+value['package_id']+'" />'+
+                                                '<input style="width:45px;border: solid #000 1px;"  min="0" id="number23'+index+'" class="package-number packageInput" type="number" onchange="changePrice();" name="package_qty[]" value="0" data-a="'+index+'" data-price="'+value['price']+'" data-name="'+value['package_name']+'" data-id="'+value['package_id']+'" max="20">'+
+                                            '</div>'+
+                                        '</div>'+                                              
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>';
+    });
+
+    $('#packageList').html(packageList);
+    changePrice();
 });
 function changePrice(id = ''){
     packagePrice = parseFloat(0);
@@ -404,6 +436,26 @@ function changeOtion(obj) {
         
     });
 }
+
+$('#myform').submit(function() {
+  // your code here
+  let isReturn = true;
+  let emailArr = [];
+  $('input[name="user_email[]"]').each(function(index,currentObj){
+        if(jQuery.inArray($(currentObj).val(), emailArr) !== -1) {
+            isReturn = false;
+        } else {            
+            emailArr.push($(currentObj).val());
+        }
+        console.log($(currentObj).val());
+  });
+  if(!isReturn) {
+    alert('Please enter unique email address')
+  }
+
+  return isReturn;
+});
+
 </script>
 
 @endsection
