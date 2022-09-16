@@ -7,7 +7,7 @@
 @section('css')
 
 <link rel="stylesheet" type="text/css" href="{{asset('backend/css/vendors/animate.css')}}">
-
+<meta name="_token" content="{{csrf_token()}}" />
 @endsection
 
 
@@ -399,7 +399,7 @@ function manageUserInputs(){
             selectOption += '<option value="'+value['package_id']+'" data-index="'+index+'">'+value['name']+'</option>';
         });
         for($i=0; $i<userNumber; $i++){
-            $('.append-list').append("<div class='col-md-4'><label class='col-form-label'>Name</label><input class='form-control' id='' type='text' name='user_name[]' placeholder='Enter name'></div><div class='col-md-4'><label class='col-form-label'>Email</label><input class='form-control' id='' type='email' name='user_email[]' placeholder='Enter email'></div><div class='col-md-4'><label class='col-form-label'>Select Package</label><input type='hidden' name='user_package[]' id='user"+$i+"' /><select class='form-control packageSelect' name='user_share[]' id='exampleFormControlSelect"+$i+"' data-main='"+$i+"' onchange='changeOtion(this);'>"+selectOption+"</select></div>");
+            $('.append-list').append("<div class='col-md-4'><label class='col-form-label'>Name</label><input class='form-control' id='' type='text' name='user_name[]' placeholder='Enter name' required></div><div class='col-md-4'><label class='col-form-label'>Email</label><input class='form-control' id='user_email"+$i+"' type='email' required name='user_email[]' placeholder='Enter email' onblur='CheckUniqueEmail(this.value,"+$i+");'></div><div class='col-md-4'><label class='col-form-label'>Select Package</label><input type='hidden' name='user_package[]' id='user"+$i+"' /><select class='form-control packageSelect' name='user_share[]' id='exampleFormControlSelect"+$i+"' required data-main='"+$i+"' onchange='changeOtion(this);' onfocus='oldValueDeSelect(this);'>"+selectOption+"</select></div>");
         }
     } else {
         $('.user-section').hide();
@@ -437,6 +437,16 @@ function changeOtion(obj) {
     });
 }
 
+function oldValueDeSelect(obj)
+{
+    let selOptionId = $(obj).attr('id');
+    let selOptionIndex = $('#'+selOptionId+' option:selected').data('index');
+    let index = $(obj).data('main');
+    $('.packageSelect').each(function(ind,value){
+        $('.packageSelect option[data-index="'+index+'"]').attr('disabled',false);
+    });
+}
+
 $('#myform').submit(function() {
   // your code here
   let isReturn = true;
@@ -455,6 +465,26 @@ $('#myform').submit(function() {
 
   return isReturn;
 });
+
+function CheckUniqueEmail(email,id) {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+        }
+    });
+    $.ajax({
+        method: 'POST',
+        url: '/call-recall/ajaxUniqueEmail',
+        dataType: 'json',
+        data: {email: email},
+        success:function(data){
+            if(data.status){
+                alert('This email is already used. Please enter unique email address');
+                $('#user_email'+id).val('');
+            }
+        }
+    })
+}
 
 </script>
 

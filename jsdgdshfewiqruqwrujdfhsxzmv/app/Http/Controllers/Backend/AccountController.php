@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 use App\Mail\Backend\AccountManageUser;
+use Response;
 
 
 
@@ -147,19 +148,20 @@ class AccountController extends Controller
 
         $finalArr['userDetail'] = $selUserArr;
         $finalArr['PackageDetail'] = $selPackageArr;
+        $request['PackageAmt'] = array_sum(array_column($selPackageArr,'amount'));
 
-        // $package = Package::findOrFail($request->package_id);
+        $this->subscriptionService->updateOrCreateCustomer();
 
-        // $this->subscriptionService->updateOrCreateCustomer();
+        //Mail::to('support@corespl.com')->send(new AccountManageUser($finalArr)); 
 
-        // return $this->subscriptionService->createSubscription($package, $request);
-
-        Mail::to('ruchi1724patel@gmail.com')->send(new AccountManageUser($finalArr)); //support@corespl.com
-
-        return redirect()->route('admin.accounts.index')->with('success', 'Congratulation you are successfully subscribed to our subscription.');
+        return $this->subscriptionService->createSubscription($package, $request);
     }
 
-
+    public function ajaxUniqueEmail(Request $request)
+    {
+        $user = User::where('email',$request->email)->first();
+        return response()->json(['status'=>($user) ? true : false]);
+    }
 
 
 
@@ -181,6 +183,8 @@ class AccountController extends Controller
 
         $userId =  explode(",",$userId);
 
+        $paymentId =  explode(",",$paymentId);
+
         foreach($customerPackageId as $cpId){
 
             CustomerPackage::destroy($cpId);
@@ -193,7 +197,11 @@ class AccountController extends Controller
 
         }
 
-        Payment::destroy($paymentId);
+        foreach($paymentId as $payment){
+
+            Payment::destroy($payment);
+
+        }        
 
         return redirect()->route('admin.accounts.index')->with('danger', 'Something went wrong please try again');
 

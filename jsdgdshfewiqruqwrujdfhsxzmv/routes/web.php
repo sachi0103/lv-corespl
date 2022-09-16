@@ -78,6 +78,8 @@ Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(functio
 
     Route::get('/accounts/transaction/cancel/{cpId}/{paymentId}', [AccountController::class, 'cancel'])->name('accounts.transaction.cancel');
 
+    Route::post('/ajaxUniqueEmail', [AccountController::class, 'ajaxUniqueEmail'])->name('accounts.ajaxUniqueEmail');
+
 });
 
 
