@@ -61,10 +61,9 @@ class AccountController extends Controller
      */
 
     public function index()
-
     {
-
-        $accounts = auth()->user()->accounts;
+        $userIds = User::where('id',auth()->user()->id)->orWhere('Parent',auth()->user()->id)->get()->toArray();
+        $accounts = CustomerPackage::whereIn('customer_id',array_column($userIds,'id'))->get();
 
         return view('backend.accounts.index')->with(compact('accounts'));
 

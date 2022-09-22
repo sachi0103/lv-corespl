@@ -120,7 +120,7 @@ class Subscription
 
                     'country_id' => $request->country_id,
 
-                    //'number_of_selected_package' => $request->number_of_selected_package,
+                    'number_of_selected_package' => 1,
 
                     //'description' => $request->description,
 
@@ -143,44 +143,16 @@ class Subscription
                 ]);
 
                 array_push($userId, $PackageUser->id);
-
-                $payment = Payment::create([
-
-                    'user_id' => $user->id,
-    
-                    'package_id' => $selPackage[0]['package_id'],
-    
-                    'country_id' => $request->country_id,
-    
-                    'number_of_packages' => 1,
-    
-                    'number_of_users' => 1,
-    
-                    'charge_per_user' => 5,
-    
-                    'charge_per_package' => $selPackage[0]['price'],
-    
-                    'subtotal' => ($selPackage[0]['price'] + 5),
-    
-                    'total' => ($selPackage[0]['price'] + 5),
-    
-                    'taxes' => 0,
-    
-                    'delivery' => 0,
-    
-                    //'use_the_payment_method_on_file' => $request->concent ? 1 : 0,
-    
-                    //'description' => $request->description,
-    
-                ]);
-
-                array_push($paymentId, $payment->id);
             }
+
+            //change the is_admin = 1
+            $user = User::find($clientId);
+            $user->is_admin = 1;
+            $user->update();
 
             if(count($request->package_id) > 0)
             {
                 foreach ($request->package_id as $value) {
-                    if(!in_array($value,$usedPackageId)) {
                         $package_id = $value;
                         $selPackage = array_values(array_filter($package, function($var) use($package_id) {
                             return ($var['package_id'] == $package_id);
@@ -216,7 +188,6 @@ class Subscription
                         ]);
         
                         array_push($paymentId, $payment->id);
-                    }
                 }
             }
 

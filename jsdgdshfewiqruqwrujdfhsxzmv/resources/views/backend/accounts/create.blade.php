@@ -232,7 +232,7 @@
 
                         <label class="col-form-label">Number of Employees</label>
 
-                        <input class="form-control" id="user-number" type="Number" name="number_of_selected_user" placeholder="Enter Number of Employees">
+                        <input class="form-control" id="user-number" required type="Number" name="number_of_selected_user" placeholder="Enter Number of Employees">
 
                     </div>
 
@@ -323,6 +323,7 @@ $('#exampleFormControlSelect9').on('change',function(){
 
     let packageList = '';
     $.each(filterPackage,function(index,value){
+        let idVal = 'number23'+index;
         packageList += '<div class="col-sm-6">'+
                             '<div class="card">'+
                                 '<div class="media p-20">'+
@@ -338,7 +339,7 @@ $('#exampleFormControlSelect9').on('change',function(){
                                             '<div class="col-md-4">'+
                                                 '<label><b>Qty:</b></label>'+
                                                 '<input type="hidden" name="package_id[]" value="'+value['package_id']+'" />'+
-                                                '<input style="width:45px;border: solid #000 1px;"  min="0" id="number23'+index+'" class="package-number packageInput" type="number" onchange="changePrice();" name="package_qty[]" value="0" data-a="'+index+'" data-price="'+value['price']+'" data-name="'+value['package_name']+'" data-id="'+value['package_id']+'" max="20">'+
+                                                '<input style="width:45px;border: solid #000 1px;"  min="0" id="number23'+index+'" class="package-number packageInput" type="number" onchange="changePrice(\''+idVal+'\');" name="package_qty[]" value="0" data-a="'+index+'" data-price="'+value['price']+'" data-name="'+value['package_name']+'" data-id="'+value['package_id']+'" max="20">'+
                                             '</div>'+
                                         '</div>'+                                              
                                     '</div>'+
@@ -352,7 +353,9 @@ $('#exampleFormControlSelect9').on('change',function(){
 });
 function changePrice(id = ''){
     packagePrice = parseFloat(0);
+    let pid = 0;
     selectPackageArr = [];
+    let noEmp = parseInt(0);
     $(".package-number").each(function(index,value){
         let tempNumber = $(value).val(); 
         let tempPrice = $(value).data("price");
@@ -360,13 +363,30 @@ function changePrice(id = ''){
 
         if (tempNumber > 0)
         {
+            if(jQuery.inArray($(value).data("id"), [7,8] ) !== -1) {
+                pid = $(value).data("id");
+            }
+
             for (let index = 0; index < tempNumber; index++) {
+                noEmp += 1;
                 selectPackageArr.push({'package_id':$(value).data("id"),'name':$(value).data("name")});
             }            
         }
-    });    
+    });   
+    
+    if(jQuery.inArray(pid, [7,8] ) !== -1) {
+        $('#user-number').removeAttr('max');
+    } else {
+        $('#user-number').prop('max',noEmp);
+    }
+        $('#user-number').prop('min',noEmp);
+    $('#user-number').val(noEmp);
+    userNumber = noEmp;
     $(".package-cost").text('$ ' + packagePrice);
     changeUserCost();
+    if(userNumber <= 0) {
+        manageUserInputs();
+    }
 }
 function changeUserCost(){
     userCost = 5 * parseInt(userNumber);
@@ -425,7 +445,7 @@ function changeOtion(obj) {
         let selIndex = $('#'+id+' option:selected').data('index');
         let selValue = $('#'+id+' option:selected').val();
         if(selIndex != undefined) {
-            if(selValue != 7) {
+            if(jQuery.inArray(selValue, [7,8] ) !== -1) {
                 $('.packageSelect option[data-index="'+selIndex+'"]').attr('disabled',true);
             }
         }

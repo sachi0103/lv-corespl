@@ -37,7 +37,7 @@
                      <h4> Welcome back:</h4>
                      <input type="hidden" name="email" value="{{$user->email}}" />
                      
-                     <input type="hidden" value="1" name="is_admin" />
+                     <input type="hidden" value="0" name="is_admin" />
                      <div class="form-group">
 
                         <label><b>{{$user->email}}</b></label>
