@@ -80,7 +80,6 @@ class Subscription
             $paymentId = [];
             $userId = [];
             $usedPackageId = [];
-
             for($i = 0; $i < $request->number_of_selected_user; $i++){
                 //get selected user package value 
                 $package_id = $request->user_package[$i];
@@ -191,7 +190,7 @@ class Subscription
                 }
             }
 
-            $packageList = Package::whereIn('package_id', $request->package_id)->get()->toArray();
+            $packageList = Package::whereIn('package_id', $usedPackageId)->get()->toArray();
             $package_name = implode(',', array_column($packageList,'package_name'));
 
             DB::commit();

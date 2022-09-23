@@ -357,24 +357,27 @@ function changePrice(id = ''){
     selectPackageArr = [];
     let noEmp = parseInt(0);
     $(".package-number").each(function(index,value){
-        let tempNumber = $(value).val(); 
+        let tempNumber = parseInt($(value).val()); 
         let tempPrice = $(value).data("price");
         packagePrice = parseFloat(packagePrice) + (parseFloat(tempPrice) * parseInt(tempNumber))
 
         if (tempNumber > 0)
         {
-            if(jQuery.inArray($(value).data("id"), [7,8] ) !== -1) {
+            if(jQuery.inArray(parseInt($(value).data("id")), [7,8] ) != -1) {
                 pid = $(value).data("id");
-            }
-
-            for (let index = 0; index < tempNumber; index++) {
-                noEmp += 1;
                 selectPackageArr.push({'package_id':$(value).data("id"),'name':$(value).data("name")});
-            }            
+            } else{
+
+                for (let index = 0; index < tempNumber; index++) {
+                    selectPackageArr.push({'package_id':$(value).data("id"),'name':$(value).data("name")});
+                }
+            }       
+            
+            noEmp += tempNumber;
         }
     });   
     
-    if(jQuery.inArray(pid, [7,8] ) !== -1) {
+    if(jQuery.inArray(parseInt(pid), [7,8] ) !== -1) {
         $('#user-number').removeAttr('max');
     } else {
         $('#user-number').prop('max',noEmp);
@@ -445,7 +448,7 @@ function changeOtion(obj) {
         let selIndex = $('#'+id+' option:selected').data('index');
         let selValue = $('#'+id+' option:selected').val();
         if(selIndex != undefined) {
-            if(jQuery.inArray(selValue, [7,8] ) !== -1) {
+            if(jQuery.inArray( parseInt(selValue), [7,8] ) === -1) {
                 $('.packageSelect option[data-index="'+selIndex+'"]').attr('disabled',true);
             }
         }

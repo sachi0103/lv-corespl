@@ -118,6 +118,7 @@ class AccountController extends Controller
 
         $finalArr = [
             'country' => $countries[$request->country_id],
+            'user_id' => $user->id,
             'user_name' => $user->name,
             'user_email' => $user->email,
             'number_of_selected_user' => $request->number_of_selected_user,
@@ -137,6 +138,7 @@ class AccountController extends Controller
         foreach ($request->package_id as $key => $value) {
             if(isset($request->package_qty[$key]) && !empty(($request->package_qty[$key]))) {
                 $selPackageArr[] = [
+                    'package_id' => $value,
                     'package' => $packagesNmArr[$value],
                     'package_qty' => $request->package_qty[$key],
                     'Price' => $packagesPriceArr[$value],
@@ -151,7 +153,7 @@ class AccountController extends Controller
 
         $this->subscriptionService->updateOrCreateCustomer();
 
-        //Mail::to('support@corespl.com')->send(new AccountManageUser($finalArr)); 
+        Mail::to('support@corespl.com')->send(new AccountManageUser($finalArr)); 
 
         return $this->subscriptionService->createSubscription($package, $request);
     }
