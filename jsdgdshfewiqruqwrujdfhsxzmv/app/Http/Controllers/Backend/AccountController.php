@@ -63,8 +63,10 @@ class AccountController extends Controller
     public function index()
     {
         $userIds = User::where('id',auth()->user()->id)->orWhere('Parent',auth()->user()->id)->get()->toArray();
-        $accounts = CustomerPackage::whereIn('customer_id',array_column($userIds,'id'))->get();
 
+        $accounts = DB::table('customer_packages')->select('customer_packages.id AS customer_packages_id','customer_packages.customer_id','customer_packages.amount','customer_packages.purchase_date','customer_packages.allowed_minutes','customer_packages.remaining_minutes','users.name','users.email')->join('users', 'users.id', '=', 'customer_packages.customer_id')->whereIn('customer_packages.customer_id',array_column($userIds,'id'))->get();
+
+        //dd($accounts);
         return view('backend.accounts.index')->with(compact('accounts'));
 
     }
