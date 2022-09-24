@@ -20,9 +20,6 @@
         <link rel="stylesheet" href="{{asset('frontend/css/LineIcons.css')}}">
 
 
-
-
-
         <!--<![endif]-->
 
         <style type="text/css">
@@ -272,20 +269,20 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td colspan="3">
                         <table style="width:100%"  border="1">
                             <tr>
                                 <td> Package Id </td>
-                                <td> Package Name <td>
-                                <td> Package Qty<td>
-                                <td> Amount <td>
+                                <td> Package Name </td>
+                                <td> Package Qty</td>
+                                <td> Amount </td>
                             </tr>
                             @foreach($data['PackageDetail'] as $value)
                                 <tr>
-                                    <td> {{$value['package_id']}} <td>
-                                    <td> {{$value['package']}} <td>
-                                    <td> {{$value['package_qty']}} <td>
-                                    <td> {{$value['amount']}} <td>
+                                    <td> {{$value['package_id']}} </td>
+                                    <td> {{$value['package']}} </td>
+                                    <td> {{$value['package_qty']}} </td>
+                                    <td> {{$value['amount']}} </td>
                                 </tr>
                             @endforeach
                         </table>
@@ -297,18 +294,18 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td colspan="3">
                         <table style="width:100%"  border="1">
                             <tr>
-                                <td> Name <td>
-                                <td> Email <td>
-                                <td> Package <td>
+                                <td> Name </td>
+                                <td> Email </td>
+                                <td> Package </td>
                             </tr>
                             @foreach($data['userDetail'] as $value)
                                 <tr>
-                                    <td> {{$value['user_name']}} <td>
-                                    <td> {{$value['user_email']}} <td>
-                                    <td> {{$value['user_package']}} <td>
+                                    <td> {{$value['user_name']}} </td>
+                                    <td> {{$value['user_email']}} </td>
+                                    <td> {{$value['user_package']}} </td>
                                 </tr>
                             @endforeach
                         </table>
