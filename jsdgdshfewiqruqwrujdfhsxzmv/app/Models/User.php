@@ -16,15 +16,15 @@ use Illuminate\Notifications\Notifiable;
 
 use Laravel\Cashier\Billable;
 
-use Spatie\Permission\Traits\HasRoles;
+//use Spatie\Permission\Traits\HasRoles;
 
 
 
 class User extends Authenticatable
 
 {
-
-    use HasFactory, HasRoles, Notifiable, Billable;
+    //HasRoles
+    use HasFactory, Notifiable, Billable;
 
 
 
@@ -116,10 +116,16 @@ class User extends Authenticatable
 
 
     public function Accounts()
+    {
+        return $this->hasMany(CustomerPackage::class, 'customer_id');
+
+    }
+
+    public function Package()
 
     {
 
-        return $this->hasMany(CustomerPackage::class, 'customer_id');
+        return $this->hasOne(Package::class,'package_id','package_id');
 
     }
 

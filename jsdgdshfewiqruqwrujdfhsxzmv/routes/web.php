@@ -74,9 +74,9 @@ Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(functio
 
     Route::resource('/accounts', AccountController::class);
 
-    Route::get('/accounts/transaction/success', [AccountController::class, 'success'])->name('accounts.transaction.success');
+    Route::get('/accounts/transaction/success/{userid}', [AccountController::class, 'success'])->name('accounts.transaction.success');
 
-    Route::get('/accounts/transaction/cancel/{cpId}/{paymentId}', [AccountController::class, 'cancel'])->name('accounts.transaction.cancel');
+    Route::get('/accounts/transaction/cancel/{cpId}/{paymentId}/{puserid}/{userid}', [AccountController::class, 'cancel'])->name('accounts.transaction.cancel');
 
     Route::post('/ajaxUniqueEmail', [AccountController::class, 'ajaxUniqueEmail'])->name('accounts.ajaxUniqueEmail');
 

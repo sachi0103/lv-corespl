@@ -66,7 +66,7 @@ class AccountController extends Controller
 
         $accounts = DB::table('customer_packages')->select('customer_packages.id AS customer_packages_id','customer_packages.customer_id','customer_packages.amount','customer_packages.purchase_date','customer_packages.allowed_minutes','customer_packages.remaining_minutes','users.name','users.email')->join('users', 'users.id', '=', 'customer_packages.customer_id')->whereIn('customer_packages.customer_id',array_column($userIds,'id'))->get();
 
-        //dd($accounts);
+     //   dd($accounts);
         return view('backend.accounts.index')->with(compact('accounts'));
 
     }
@@ -84,7 +84,6 @@ class AccountController extends Controller
      */
 
     public function create()
-
     {
 
         $countries = Country::get();
@@ -118,24 +117,6 @@ class AccountController extends Controller
 
         $user = auth()->user();
 
-        $finalArr = [
-            'country' => $countries[$request->country_id],
-            'user_id' => $user->id,
-            'user_name' => $user->name,
-            'user_email' => $user->email,
-            'number_of_selected_user' => $request->number_of_selected_user,
-            'user_cost' => 5 * $request->number_of_selected_user,
-        ];
-
-        $selUserArr = [];
-        foreach ($request->user_name as $key => $value) {
-           $selUserArr[] = [
-                'user_name' => $value,
-                'user_email' => (isset($request->user_email[$key])) ? $request->user_email[$key] : '',
-                'user_package' => (isset($packagesNmArr[$request->user_package[$key]])) ? $packagesNmArr[$request->user_package[$key]] : '',
-           ];
-        }
-
         $selPackageArr = [];
         foreach ($request->package_id as $key => $value) {
             if(isset($request->package_qty[$key]) && !empty(($request->package_qty[$key]))) {
@@ -148,14 +129,9 @@ class AccountController extends Controller
                ];
             }
          }
-
-        $finalArr['userDetail'] = $selUserArr;
-        $finalArr['PackageDetail'] = $selPackageArr;
         $request['PackageAmt'] = array_sum(array_column($selPackageArr,'amount'));
 
         $this->subscriptionService->updateOrCreateCustomer();
-
-        Mail::to('support@corespl.com')->send(new AccountManageUser($finalArr)); 
 
         return $this->subscriptionService->createSubscription($package, $request);
     }
@@ -168,9 +144,50 @@ class AccountController extends Controller
 
 
 
-    public function success()
-
+    public function success($MuserId)
     {
+        $MuserId =  explode(",",$MuserId);
+        $userList = User::with(['Accounts','Package'])->whereIn('id',$MuserId)->get()->toArray();
+
+        $user = auth()->user();
+        $TempEmailArr = [
+            'country' => $userList[0]['accounts'][0]['country_id'],
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'user_email' => $user->email,
+            'number_of_selected_user' => count($userList),
+            'user_cost' => 5 * count($userList),
+        ];
+
+        $selUserArr = [];
+        $selPackageArr = [];
+        foreach ($userList as $key => $value) {
+            $selUserArr[] = [
+                'user_name' => $value['name'],
+                'user_email' => $value['email'],
+                'user_package' => $value['package']['package_name'],
+            ];
+
+            $selPackageArr[] = [
+                'package_id' => $value['package']['package_id'],
+                'package' => $value['package']['package_name'],
+                'package_qty' => $value['package']['package_name'],
+                'Price' => $value['package']['price'],
+                'amount' => $value['accounts'][0]['amount']
+            ];
+        }
+
+        
+
+        $TempEmailArr['userDetail'] = $selUserArr;
+        $TempEmailArr['PackageDetail'] = $selPackageArr;
+        Mail::to('support@corespl.com')->send(new AccountManageUser($TempEmailArr));
+
+        //change the is_admin = 1
+        $clientId = auth()->user()->id;
+        $user = User::find($clientId);
+        $user->is_admin = 1;
+        $user->update();
 
         return redirect()->route('admin.accounts.index')->with('success', 'Congratulation you are successfully subscribed to our subscription.');
 
@@ -178,13 +195,15 @@ class AccountController extends Controller
 
 
 
-    public function cancel($customerPackageId, $paymentId, $userId)
+    public function cancel($customerPackageId, $paymentId, $userId,$MuserId)
 
     {
 
         $customerPackageId =  explode(",",$customerPackageId);
 
         $userId =  explode(",",$userId);
+
+        $MuserId =  explode(",",$MuserId);
 
         $paymentId =  explode(",",$paymentId);
 
@@ -198,6 +217,11 @@ class AccountController extends Controller
 
             PackageUser::destroy($user);
 
+        }
+
+        foreach($MuserId as $user){
+
+            User::destroy($user);
         }
 
         foreach($paymentId as $payment){

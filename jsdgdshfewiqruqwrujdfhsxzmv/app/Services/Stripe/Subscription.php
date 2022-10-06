@@ -79,6 +79,7 @@ class Subscription
             $customerPackageId = [];
             $paymentId = [];
             $userId = [];
+            $MuserId = [];
             $usedPackageId = [];
             for($i = 0; $i < $request->number_of_selected_user; $i++){
                 //get selected user package value 
@@ -98,7 +99,7 @@ class Subscription
                     'Parent' => $clientId,
                     'password' => Hash::make($request->user_name[$i]),
                 ]);
-                
+                array_push($MuserId,$user->id);
 
                 //user package user created 
                 $customerPackage = CustomerPackage::create([
@@ -143,11 +144,6 @@ class Subscription
 
                 array_push($userId, $PackageUser->id);
             }
-
-            //change the is_admin = 1
-            $user = User::find($clientId);
-            $user->is_admin = 1;
-            $user->update();
 
             if(count($request->package_id) > 0)
             {
@@ -199,15 +195,17 @@ class Subscription
 
             $userId = implode(',', $userId);
 
+            $MuserId = implode(',', $MuserId);
+
             $paymentId = implode(',', $paymentId);
 
             return auth()->user()->checkoutCharge($total*100, $package_name,
 
             1,
 
-             ['success_url' => route('admin.accounts.transaction.success', [$clientId,$customerPackageId]),
+             ['success_url' => route('admin.accounts.transaction.success', [$MuserId]),
 
-             'cancel_url' => route('admin.accounts.transaction.cancel', [$customerPackageId, $paymentId, $userId])
+             'cancel_url' => route('admin.accounts.transaction.cancel', [$customerPackageId, $paymentId, $userId,$MuserId])
 
             ]);
         }catch(Throwable $exception){
