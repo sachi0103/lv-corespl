@@ -86,13 +86,15 @@
 
                                         <th scope="col">User Email</th>
 
-                                        <th scope="col">Ammount</th>
+                                        <th scope="col">Purchase Date</th>
 
-                                        <th scope="col">Allowed Minutes</th>
+                                        <td scope="col">Plan Purchased</td>
 
                                         <th scope="col">Remaining Minutes</th>
 
-                                        <th scope="col">Purchase Date</th>
+                                        <th scope="col">Expiry Date</th>
+
+                                        <th scope="col">Action</th>
 
                                     </tr>
 
@@ -110,13 +112,22 @@
 
                                         <td>{{$account->email}}</td>
 
-                                        <td>{{$account->amount}}</td>
+                                        <td>{{$account->purchase_date}}</td>
 
-                                        <td>{{$account->allowed_minutes}}</td>
+                                        <td>{{$account->package_name}}</td>
 
                                         <td>{{$account->remaining_minutes}}</td>
 
-                                        <td>{{$account->purchase_date}}</td>
+                                        <td> {{ ( in_array($account->package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime($account->purchase_date) ) ) : '' }}</td>
+
+                                        <td> 
+                                            
+                                            <a href="{{ route('admin.accounts.renew_plan', base64_encode($account->customer_packages_id)) }}" class="btn-sm btn-info">Renew</a>
+
+                                            <?php if($account->remaining_minutes <= $changePlanLimit ) { ?>    
+                                                <a href="{{ route('admin.accounts.add_minutes', base64_encode($account->customer_id)) }}" class="btn-sm btn-info">Change Plan</a> 
+                                            <?php } ?>
+                                        </td>
 
                                     </tr>
 
@@ -145,6 +156,5 @@
 @section('script')
 
 <script src="{{asset('backend/js/dashboard/default.js')}}"></script>
-
 @endsection
 

@@ -74,12 +74,22 @@ Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(functio
 
     Route::resource('/accounts', AccountController::class);
 
+    Route::get('/accounts/add_minutes/{userid}', [AccountController::class, 'add_minutes'])->name('accounts.add_minutes');
+
     Route::get('/accounts/transaction/success/{userid}', [AccountController::class, 'success'])->name('accounts.transaction.success');
+
+    Route::get('/accounts/transaction/success', [AccountController::class, 'success'])->name('accounts.transaction.success');
 
     Route::get('/accounts/transaction/cancel/{cpId}/{paymentId}/{puserid}/{userid}', [AccountController::class, 'cancel'])->name('accounts.transaction.cancel');
 
+    Route::get('/accounts/transaction/cancel/{cpId}/{paymentId}/{puserid}', [AccountController::class, 'cancel'])->name('accounts.transaction.cancel');
+
+
     Route::post('/ajaxUniqueEmail', [AccountController::class, 'ajaxUniqueEmail'])->name('accounts.ajaxUniqueEmail');
 
+    Route::post('/accounts/add_minutes', [AccountController::class, 'save_extra_minutes'])->name('accounts.save_minutes');
+
+    Route::get('/accounts/renew_plan/{custpackageid}', [AccountController::class, 'renew_plan'])->name('accounts.renew_plan');
 });
 
 

@@ -310,6 +310,8 @@ var taxes = parseFloat(0);
 var dilevery = parseFloat(0);
 var selectPackageArr = [];
 var PackageList = <?php echo  (count($packages) > 0) ? json_encode($packages) : ''; ?>;
+var countries = <?php echo  (count($countries) > 0) ? json_encode($countries) : ''; ?>;
+var perUserCost = parseFloat(countries[0]['user_cost']);
 $(".package-number").bind('keyup mouseup', function () {
     changePrice($(this).attr('id'));           
 });
@@ -320,6 +322,15 @@ $('#exampleFormControlSelect9').on('change',function(){
         return (country == (value['call_country']).toLowerCase())
         //console.log(value['call_country']);
     } );
+
+    let selCountry = countries.filter( function (val,ind) {
+            return (val['ID'] == $('#exampleFormControlSelect9 option:selected').val());
+    });
+    if(selCountry[0] != undefined) {
+        perUserCost = parseFloat(selCountry[0]['user_cost']);
+    } else {
+        perUserCost = parseFloat(0);
+    }
 
     let packageList = '';
     $.each(filterPackage,function(index,value){
@@ -386,18 +397,25 @@ function changePrice(id = ''){
     $('#user-number').val(noEmp);
     userNumber = noEmp;
     $(".package-cost").text('$ ' + packagePrice);
-    changeUserCost();
-    if(userNumber <= 0) {
+        changeUserCost();
+    if(userNumber > 0) {
         manageUserInputs();
     }
 }
 function changeUserCost(){
-    userCost = 5 * parseInt(userNumber);
+    let UnlimitedShareCount = parseInt(0);
+    $('.packageSelect').each(function(ind,value){
+        let id = $(value).attr('id');
+        let selValue = $('#'+id+' option:selected').val();
+
+        if(jQuery.inArray( parseInt(selValue), [7,8] ) !== -1) {
+            UnlimitedShareCount+= 1;
+        }        
+    });
+
+    userCost = (UnlimitedShareCount > 1) ? perUserCost * (UnlimitedShareCount - 1) : 0;
     $(".user-cost").text('$ ' + userCost );
     changeSubtotalPrice();
-    if(userNumber > 0) {
-        manageUserInputs();
-    }
 }
 function changeSubtotalPrice(){
     subtotal = parseFloat( packagePrice + userCost );
@@ -410,7 +428,6 @@ function changeTotalPrice(){
 }
 $("#user-number").on('change',function(e){
     userNumber = this.value;
-    changeUserCost();
     manageUserInputs();
 });
 function manageUserInputs(){
@@ -444,6 +461,7 @@ function changeOtion(obj) {
         });
     }
     $('.packageSelect').each(function(ind,value){
+        UnlimitedShareCount = parseInt(1);
         let id = $(value).attr('id');
         let selIndex = $('#'+id+' option:selected').data('index');
         let selValue = $('#'+id+' option:selected').val();
@@ -453,11 +471,16 @@ function changeOtion(obj) {
             }
         }
 
+        if(jQuery.inArray( parseInt(selValue), [7,8] ) !== -1) {
+            UnlimitedShareCount+= 1;
+        }
+
         
         if(!isSelected)
             $('.packageSelect option[data-index="'+selOptionIndex+'"]').attr('disabled',false);
         
     });
+    changeUserCost();
 }
 
 function oldValueDeSelect(obj)
