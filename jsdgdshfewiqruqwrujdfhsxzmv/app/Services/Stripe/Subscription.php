@@ -84,7 +84,7 @@ class Subscription
 
                 'package_id' => $packageDetails->package_id,
 
-                'country_id' => $custPackageDetails->country_id,
+                'country_id' => (!empty($custPackageDetails->country_id)) ? $custPackageDetails->country_id : 0,
 
                 'number_of_packages' => 1,
 
