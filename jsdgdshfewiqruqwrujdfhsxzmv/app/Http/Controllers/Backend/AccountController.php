@@ -38,7 +38,6 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Mail\Backend\AccountManageUser;
 use Response;
-use DataTables;
 
 
 class AccountController extends Controller
