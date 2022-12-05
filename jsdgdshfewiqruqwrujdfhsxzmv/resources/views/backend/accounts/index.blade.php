@@ -7,6 +7,7 @@
 @section('css')
 
 <link rel="stylesheet" type="text/css" href="{{asset('backend/css/vendors/animate.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('backend/css/vendors/datatables.css')}}">
 
 @endsection
 
@@ -68,13 +69,17 @@
 
                         <div class="card-header">
 
-                            <h5>Accounts Information</h5>
+                            <div class="row">
+                                
+                                <div class="col-sm-8"><h5>Accounts Information</h5></div>
 
+                                <div class="col-sm-4"><a href="{{ route('admin.accounts.renew_all_plan' , base64_encode(auth()->user()->id)) }}" class="btn-sm btn-info pull-right">Renew All</a></div>
+                            </div>
                         </div>
 
-                        <div class="table-responsive">
+                        <div class="card-body">
 
-                            <table class="table">
+                            <table class="table table-striped" id="account-table">
 
                                 <thead>
 
@@ -88,7 +93,7 @@
 
                                         <th scope="col">Purchase Date</th>
 
-                                        <td scope="col">Plan Purchased</td>
+                                        <th scope="col">Plan Purchased</th>
 
                                         <th scope="col">Remaining Minutes</th>
 
@@ -101,7 +106,7 @@
                                 </thead>
 
                                 <tbody>
-
+                                    
                                     @forelse ($accounts as $key => $account)
 
                                     <tr>
@@ -134,9 +139,6 @@
                                     @empty
 
                                     @endforelse
-
-
-
                                 </tbody>
 
                             </table>
@@ -156,5 +158,11 @@
 @section('script')
 
 <script src="{{asset('backend/js/dashboard/default.js')}}"></script>
+<script src="{{asset('backend/js/datatable/jquery.dataTables.min.js')}}"></script>
+<script type="text/javascript">
+  $(function () {
+    var table = $('#account-table').DataTable();
+  });
+</script>
 @endsection
 

@@ -18,6 +18,8 @@ use App\Models\User;
 
 use App\Models\Payment;
 
+use App\Models\PaymentsUsers;
+
 use Carbon\Carbon;
 
 use Illuminate\Http\Request;
@@ -108,17 +110,113 @@ class Subscription
 
             ]);
 
+            PaymentsUsers::create([
+                'user_id' => $custPackageDetails->customer_id,
+                'payment_id' => $payment->id
+            ]);
+
+            DB::commit();
+
             $total = $packageDetails->price;
 
             $package_name = $packageDetails->package_name;
-
-            DB::commit();
 
             $customerPackageId = $custPackageDetails->id;
 
             $userId = $custPackageDetails->customer_id;
 
             $paymentId = $payment->id;
+
+            return auth()->user()->checkoutCharge($total*100, $package_name,
+
+            1,
+
+             ['success_url' => route('admin.accounts.transaction.success'),
+
+             'cancel_url' => route('admin.accounts.transaction.cancel', [$customerPackageId, $paymentId, $userId])
+
+            ]);
+
+        }catch(Throwable $exception){
+
+            DB::rollBack();
+
+            return $exception->getMessage();
+
+        }
+    }
+
+    //renew plan all plan login user
+    function renewAllSubscription($clientId,$allLoginUser)
+    {
+        DB::beginTransaction();
+        try{
+
+            $total = 0;
+            $package_name = '';
+            $customerPackageId = [];
+            $userId = [];
+            $paymentId = [];
+
+            foreach ($allLoginUser as $key => $custPackageDetails) 
+            {
+                $packageDetails = Package::find($custPackageDetails->package_id);
+
+                $remaining_minutes = ($custPackageDetails->remaining_minutes > 0) ? ( $custPackageDetails->remaining_minutes + $packageDetails->call_minutes ) : $packageDetails->call_minutes;
+
+                CustomerPackage::where('id',$custPackageDetails->customer_packages_id)->update(['remaining_minutes'=>$remaining_minutes,'updated_at'=>date('Y-m-d H:i:s'),'purchase_date'=>date('Y-m-d')]);
+
+                $payment = Payment::create([
+
+                    'user_id' => auth()->user()->id,
+
+                    'package_id' => $packageDetails->package_id,
+
+                    'country_id' => (!empty($custPackageDetails->country_id)) ? $custPackageDetails->country_id : 0,
+
+                    'number_of_packages' => 1,
+
+                    'number_of_users' => 1,
+
+                    'charge_per_user' => 0,
+
+                    'charge_per_package' => $packageDetails->price,
+
+                    'subtotal' => $packageDetails->price,
+
+                    'total' => $packageDetails->price,
+
+                    'taxes' => 0,
+
+                    'delivery' => 0,
+
+                    'use_the_payment_method_on_file' => 0,
+
+                    //'description' => $request->description,
+
+                ]);
+
+                PaymentsUsers::create([
+                    'user_id' => $custPackageDetails->customer_id,
+                    'payment_id' => $payment->id
+                ]);
+
+                $total = $total + $packageDetails->price;
+
+                $package_name .= (!empty($package_name)) ? ','.$packageDetails->package_name : $packageDetails->package_name ;
+
+                array_push($customerPackageId, $custPackageDetails->customer_packages_id);
+
+                array_push($userId, $custPackageDetails->customer_id);
+
+                array_push($paymentId, $payment->id);
+            }
+            
+            DB::commit();
+            
+            $customerPackageId = implode(",",$customerPackageId);
+            $userId =  implode(",",$userId);
+            $paymentId =  implode(",",$paymentId);
 
             return auth()->user()->checkoutCharge($total*100, $package_name,
 
@@ -146,7 +244,8 @@ class Subscription
         try{
 
             $clientId = auth()->user()->id;
-            $total = $request['PackageAmt'] + (5 * $request->number_of_selected_user);
+            $total = 0;
+            $user_package_arr = [];
             $customerPackageId = [];
             $paymentId = [];
             $userId = [];
@@ -172,6 +271,8 @@ class Subscription
                     'password' => Hash::make($request->user_name[$i]),
                 ]);
                 array_push($MuserId,$user->id);
+
+                array_push($user_package_arr,['user_id'=>$user->id,'package_id'=>$selPackage[0]['package_id']]);
 
                 //user package user created 
                 $customerPackage = CustomerPackage::create([
@@ -225,11 +326,12 @@ class Subscription
                         $selPackage = array_values(array_filter($package, function($var) use($package_id) {
                             return ($var['package_id'] == $package_id);
                         }));
-                        $usercost = ($request->package_qty[$key] > 1 && in_array($package_id,[7,8]) ) ? $request->UserCost : 0;
-                        $number_of_user = count(array_values(array_filter($request->user_package,function($var) use($package_id){
-                            return ($var == $package_id);
-                        })))
-                        ;
+                        $number_of_user = array_values(array_filter($user_package_arr,function($var) use($package_id){
+                            return ($var['package_id'] == $package_id);
+                        }));
+                        $Perusercost = (count($number_of_user) > 1 && in_array($package_id,[7,8]) ) ? $request->UserCost : 0;
+
+                        $usercost = $Perusercost * (count($number_of_user) - 1);
 
                         $payment = Payment::create([
 
@@ -241,15 +343,15 @@ class Subscription
             
                             'number_of_packages' => $request->package_qty[$key],
             
-                            'number_of_users' => $number_of_user,
+                            'number_of_users' => count($number_of_user),
             
-                            'charge_per_user' => $usercost,
+                            'charge_per_user' => $Perusercost,
             
                             'charge_per_package' => $selPackage[0]['price'],
             
-                            'subtotal' => ( ($selPackage[0]['price'] * $request->package_qty[$key] ) + $usercost),
+                            'subtotal' => ( ($selPackage[0]['price'] * $request->package_qty[$key] ) + $usercost ),
             
-                            'total' => ( ($selPackage[0]['price'] * $request->package_qty[$key] ) + $usercost),
+                            'total' => ( ($selPackage[0]['price'] * $request->package_qty[$key] ) + $usercost ),
             
                             'taxes' => 0,
             
@@ -260,8 +362,17 @@ class Subscription
                             //'description' => $request->description,
             
                         ]);
+
+                        $total = $total  + $payment->total;
         
                         array_push($paymentId, $payment->id);
+
+                        foreach($number_of_user as $val) {
+                            PaymentsUsers::create([
+                                'user_id' => $val['user_id'],
+                                'payment_id' => $payment->id
+                            ]);
+                        }
                     }
                 }
             }
@@ -401,6 +512,11 @@ class Subscription
         
                         //'description' => $request->description,
         
+                    ]);
+
+                    PaymentsUsers::create([
+                        'user_id' => $request['customer_id'],
+                        'payment_id' => $payment->id
                     ]);
         
                     array_push($paymentId, $payment->id);

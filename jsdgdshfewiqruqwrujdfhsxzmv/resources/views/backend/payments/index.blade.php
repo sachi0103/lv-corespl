@@ -6,14 +6,25 @@
 
 @section('css')
 
-<link rel="stylesheet" type="text/css" href="{{asset('backend/css/vendors/animate.css')}}">
-
+<link rel="stylesheet" type="text/css" href="{{asset('backend/css/vendors/animate.css')}}" />
+<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.1.6/css/dx.common.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.1.6/css/dx.light.css" />
 @endsection
 
 
 
 @section('style')
+<style>
+    #gridContainer {
+        height: 440px;
+    }
 
+    .master-detail-caption {
+        padding: 0 0 5px 10px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+</style>
 @endsection
 
 
@@ -72,71 +83,8 @@
 
                         </div>
 
-                        <div class="table-responsive">
-
-                            <table class="table">
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th scope="col">#</th>
-
-                                        {{-- <th scope="col">Package</th> --}}
-
-                                        <th scope="col">Number of Packages</th>
-
-                                        <th scope="col">Number of User</th>
-
-                                        <th scope="col">Charge per user</th>
-
-                                        <th scope="col">Charge per Package</th>
-
-                                        <th scope="col">Subtotal</th>
-
-                                        <th scope="col">Total</th>
-
-                                        <th scope="col">Created</th>
-                                    </tr>
-
-                                </thead>
-
-                                <tbody>
-
-                                    @forelse ($payments as $key => $payment)
-
-                                    <tr>
-
-                                        <th scope="row">{{ $key+1 }}</th>
-
-                                        {{-- <td>{{$payment->package->package_name}}</td> --}}
-
-                                        <td>{{$payment->number_of_packages}}</td>
-
-                                        <td>{{$payment->number_of_users}}</td>
-
-                                        <td>$ {{$payment->charge_per_user}}</td>
-
-                                        <td>$ {{$payment->charge_per_package}}</td>
-
-                                        <td>$ {{$payment->subtotal}}</td>
-
-                                        <td>$ {{$payment->total}}</td>
-
-                                        <td>{{ date('Y-m-d',strtotime($payment->created_at)) }}</td>
-
-                                    </tr>
-
-                                    @empty
-
-                                    @endforelse
-
-
-
-                                </tbody>
-
-                            </table>
-
+                        <div class="card-body">
+                                <div id="payment-table"></div>
                         </div>
 
                     </div>
@@ -152,6 +100,91 @@
 @section('script')
 
 <script src="{{asset('backend/js/dashboard/default.js')}}"></script>
+<script src="https://cdn3.devexpress.com/jslib/22.1.6/js/dx.all.js"></script>
+<script type="text/javascript">
+$(function () {
+    var payment = <?php echo (!empty($payments)) ? json_encode($payments) : '[]'; ?>;
+    $('#payment-table').dxDataGrid({
+        dataSource: payment,
+        keyExpr: 'id',
+        showBorders: true,
+        paging: {
+            pageSize: 15,
+        },
+        filterRow: {
+            visible: true,
+            applyFilter: 'auto',
+        },
+        searchPanel: {
+            visible: true,
+            width: 240,
+            placeholder: 'Search...',
+        },
+        headerFilter: {
+            visible: true,
+        },
+        columns: [
+            {
+                dataField: 'number_of_users',
+                caption: 'Number of User',
+            },
+            {
+                dataField: 'package_id',
+                caption: 'Package',
+                calculateCellValue: function (rowData) {
+                    return rowData.package.package_name;
+                }
+            },
+            {
+                dataField: 'subtotal',
+                caption: 'Subtotal',
+            },
+            {
+                dataField: 'total',
+                caption: 'Total',
+            },
+            {
+                dataField: 'created_at',
+                caption: 'Created',
+                dataType: 'date',
+            },
+        ],
+        masterDetail: {
+            enabled: true,
+            template(container, options) {
+                const currentUserData = options.data.payment_users;
+                $('<div>')
+                .addClass('master-detail-caption')
+                .text(`User Details: `)
+                .appendTo(container);
 
+                $('<div>')
+                .dxDataGrid({
+                    columnAutoWidth: true,
+                    showBorders: true,
+                    dataSource: currentUserData,
+                    keyExpr: 'id',
+                    columns: [
+                        {
+                            dataField: 'id',
+                            caption: 'Name',
+                            calculateCellValue: function (colData) {
+                                return colData.user.name;
+                            }
+                        },
+                        {
+                            dataField: 'payment_id',
+                            caption: 'Email',
+                            calculateCellValue: function (colData) {
+                                return colData.user.email;
+                            }
+                        },
+                    ],
+                }).appendTo(container);
+            },
+        },
+    });
+});
+</script>
 @endsection
 

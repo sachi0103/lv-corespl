@@ -90,6 +90,8 @@ Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(functio
     Route::post('/accounts/add_minutes', [AccountController::class, 'save_extra_minutes'])->name('accounts.save_minutes');
 
     Route::get('/accounts/renew_plan/{custpackageid}', [AccountController::class, 'renew_plan'])->name('accounts.renew_plan');
+
+    Route::get('/accounts/renew_all_plan/{custpackageid}', [AccountController::class, 'all_user_plan_renew'])->name('accounts.renew_all_plan');
 });
 
 

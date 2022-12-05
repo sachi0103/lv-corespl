@@ -24,6 +24,8 @@ use App\Models\PackageUser;
 
 use App\Models\Payment;
 
+use App\Models\PaymentsUsers;
+
 use App\Models\User;
 
 use App\Services\Stripe\Subscription;
@@ -36,7 +38,7 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Mail\Backend\AccountManageUser;
 use Response;
-
+use DataTables;
 
 
 class AccountController extends Controller
@@ -62,18 +64,17 @@ class AccountController extends Controller
 
      */
 
-    public function index()
+    public function index(Request $request)
     {
         $userIds = User::where('id',auth()->user()->id)->orWhere('Parent',auth()->user()->id)->get()->toArray();
-
+        
         $accounts = DB::select('SELECT customer_packages.id AS customer_packages_id,packages.package_name,customer_packages.package_id,customer_packages.customer_id,customer_packages.amount,customer_packages.purchase_date,customer_packages.allowed_minutes,customer_packages.remaining_minutes,users.name,users.email FROM customer_packages INNER JOIN packages ON packages.package_id = customer_packages.package_id INNER JOIN users ON users.id = customer_packages.customer_id WHERE customer_packages.id IN ( SELECT MAX(id) FROM customer_packages WHERE customer_packages.customer_id IN ("'.implode('","',array_column($userIds,'id')).'") GROUP BY customer_id ) ORDER BY customer_packages.id DESC');
 
         $setting = Settings::where('key','ChangePlan')->first();
 
         $changePlanLimit = ($setting->value) ? $setting->value : 0 ;
         
-        return view('backend.accounts.index')->with(compact('accounts','changePlanLimit'));
-
+        return view('backend.accounts.index')->with(compact('changePlanLimit','accounts'));
     }
 
 
@@ -148,6 +149,7 @@ class AccountController extends Controller
          }
         $request['PackageAmt'] = array_sum(array_column($selPackageArr,'amount'));
         $request['UserCost'] = $countriesCost[$request->country_id];
+
         $this->subscriptionService->updateOrCreateCustomer();
 
         return $this->subscriptionService->createSubscription($package, $request);
@@ -177,6 +179,8 @@ class AccountController extends Controller
 
         $request['PackageAmt'] = array_sum(array_column($selPackageArr,'amount'));
 
+        $this->subscriptionService->updateOrCreateCustomer();
+
         return $this->subscriptionService->createExtraSubscription($package, $request);
     }
 
@@ -190,7 +194,30 @@ class AccountController extends Controller
         {
             $packageDetails = Package::find($cust_package_details->package_id);
 
+            $this->subscriptionService->updateOrCreateCustomer();
+
             return $this->subscriptionService->renewSubscription($cust_package_details,$packageDetails);
+        }
+
+    }
+
+    public function all_user_plan_renew($clientId)
+    {
+        $clientId = base64_decode($clientId);
+
+        if(!empty($clientId))
+        {
+            //get all login user 
+            $userIds = User::where('id',$clientId)->orWhere('Parent',$clientId)->get()->toArray();
+
+            $accounts = DB::select('SELECT customer_packages.id AS customer_packages_id,packages.package_name,customer_packages.package_id,customer_packages.customer_id,customer_packages.amount,customer_packages.purchase_date,customer_packages.allowed_minutes,customer_packages.remaining_minutes,users.name,users.email,customer_packages.country_id FROM customer_packages INNER JOIN packages ON packages.package_id = customer_packages.package_id INNER JOIN users ON users.id = customer_packages.customer_id WHERE customer_packages.id IN ( SELECT MAX(id) FROM customer_packages WHERE customer_packages.customer_id IN ("'.implode('","',array_column($userIds,'id')).'") GROUP BY customer_id ) ORDER BY customer_packages.id DESC');
+
+            if (!empty($accounts)) {
+
+                $this->subscriptionService->updateOrCreateCustomer();
+
+                return $this->subscriptionService->renewAllSubscription($clientId,$accounts);
+            }
         }
 
     }
@@ -258,7 +285,6 @@ class AccountController extends Controller
 
 
     public function cancel($customerPackageId, $paymentId, $userId,$MuserId="")
-
     {
 
         $customerPackageId =  explode(",",$customerPackageId);
@@ -289,7 +315,7 @@ class AccountController extends Controller
         foreach($paymentId as $payment){
 
             Payment::destroy($payment);
-
+            PaymentsUsers::where('payment_id',$payment)->delete();
         }        
 
         return redirect()->route('admin.accounts.index')->with('danger', 'Something went wrong please try again');
