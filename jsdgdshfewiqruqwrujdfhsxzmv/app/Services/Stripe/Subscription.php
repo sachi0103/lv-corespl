@@ -112,7 +112,8 @@ class Subscription
 
             PaymentsUsers::create([
                 'user_id' => $custPackageDetails->customer_id,
-                'payment_id' => $payment->id
+                'payment_id' => $payment->id,
+                'package_id' => $packageDetails->package_id,
             ]);
 
             DB::commit();
@@ -157,7 +158,7 @@ class Subscription
             $customerPackageId = [];
             $userId = [];
             $paymentId = [];
-
+            $lastesPaymentId = 0;
             foreach ($allLoginUser as $key => $custPackageDetails) 
             {
                 $packageDetails = Package::find($custPackageDetails->package_id);
@@ -166,39 +167,53 @@ class Subscription
 
                 CustomerPackage::where('id',$custPackageDetails->customer_packages_id)->update(['remaining_minutes'=>$remaining_minutes,'updated_at'=>date('Y-m-d H:i:s'),'purchase_date'=>date('Y-m-d')]);
 
-                $payment = Payment::create([
+                if($key == 0) {
+                    
+                    $payment = Payment::create([
 
-                    'user_id' => auth()->user()->id,
+                        'user_id' => auth()->user()->id,
 
-                    'package_id' => $packageDetails->package_id,
+                        'package_id' => $packageDetails->package_id,
 
-                    'country_id' => (!empty($custPackageDetails->country_id)) ? $custPackageDetails->country_id : 0,
+                        'country_id' => (!empty($custPackageDetails->country_id)) ? $custPackageDetails->country_id : 0,
 
-                    'number_of_packages' => 1,
+                        'number_of_packages' => 1,
 
-                    'number_of_users' => 1,
+                        'number_of_users' => 1,
 
-                    'charge_per_user' => 0,
+                        'charge_per_user' => 0,
 
-                    'charge_per_package' => $packageDetails->price,
+                        'charge_per_package' => $packageDetails->price,
 
-                    'subtotal' => $packageDetails->price,
+                        'subtotal' => $packageDetails->price,
 
-                    'total' => $packageDetails->price,
+                        'total' => $packageDetails->price,
 
-                    'taxes' => 0,
+                        'taxes' => 0,
 
-                    'delivery' => 0,
+                        'delivery' => 0,
 
-                    'use_the_payment_method_on_file' => 0,
+                        'use_the_payment_method_on_file' => 0,
 
-                    //'description' => $request->description,
+                        //'description' => $request->description,
 
-                ]);
+                    ]);
+                    $lastesPaymentId = $payment->id;
+                } else {
+                    
+                    $payment = Payment::find($lastesPaymentId);
+
+                    Payment::where('id',$lastesPaymentId)->update([
+                        'charge_per_package'=> $payment->charge_per_package + $packageDetails->price,
+                        'subtotal'=> $payment->subtotal + $packageDetails->price,
+                        'total'=> $payment->charge_per_package + $packageDetails->price,
+                    ]);
+                }
 
                 PaymentsUsers::create([
                     'user_id' => $custPackageDetails->customer_id,
-                    'payment_id' => $payment->id
+                    'payment_id' => $lastesPaymentId,
+                    'package_id' => $packageDetails->package_id,
                 ]);
 
                 $total = $total + $packageDetails->price;
@@ -320,6 +335,7 @@ class Subscription
 
             if(count($request->package_id) > 0)
             {
+                $lastesPaymentId = 0;
                 foreach ($request->package_id as $key => $value) {
                     if (!empty($request->package_qty[$key])) {
                         $package_id = $value;
@@ -333,44 +349,60 @@ class Subscription
 
                         $usercost = $Perusercost * (count($number_of_user) - 1);
 
-                        $payment = Payment::create([
+                        if($key == 0) {
+                            
+                            $payment = Payment::create([
 
-                            'user_id' => $clientId,
-            
-                            'package_id' => $selPackage[0]['package_id'],
-            
-                            'country_id' => $request->country_id,
-            
-                            'number_of_packages' => $request->package_qty[$key],
-            
-                            'number_of_users' => count($number_of_user),
-            
-                            'charge_per_user' => $Perusercost,
-            
-                            'charge_per_package' => $selPackage[0]['price'],
-            
-                            'subtotal' => ( ($selPackage[0]['price'] * $request->package_qty[$key] ) + $usercost ),
-            
-                            'total' => ( ($selPackage[0]['price'] * $request->package_qty[$key] ) + $usercost ),
-            
-                            'taxes' => 0,
-            
-                            'delivery' => 0,
-            
-                            'use_the_payment_method_on_file' => $request->concent ? 1 : 0,
-            
-                            //'description' => $request->description,
-            
-                        ]);
+                                'user_id' => $clientId,
+                
+                                'package_id' => $selPackage[0]['package_id'],
+                
+                                'country_id' => $request->country_id,
+                
+                                'number_of_packages' => $request->package_qty[$key],
+                
+                                'number_of_users' => $request->number_of_selected_user,
+                
+                                'charge_per_user' => $Perusercost,
+                
+                                'charge_per_package' => $selPackage[0]['price'],
+                
+                                'subtotal' => ( ($selPackage[0]['price'] * $request->package_qty[$key] )),
+                
+                                'total' => ( ($selPackage[0]['price'] * $request->package_qty[$key] ) + $usercost ),
+                
+                                'taxes' => 0,
+                
+                                'delivery' => 0,
+                
+                                'use_the_payment_method_on_file' => $request->concent ? 1 : 0,
+                
+                                //'description' => $request->description,
+                
+                            ]);
+    
+                            $lastesPaymentId = $payment->id;
+                        } else {
+                            
+                            $payment = Payment::find($lastesPaymentId);
+        
+                            Payment::where('id',$lastesPaymentId)->update([
+                                'charge_per_user' => $payment->charge_per_user + $Perusercost,
+                                'charge_per_package' => $payment->charge_per_package + $selPackage[0]['price'],
+                                'subtotal' => $payment->subtotal + ( ($selPackage[0]['price'] * $request->package_qty[$key] ) ),
+                                'total' => $payment->total + ( ($selPackage[0]['price'] * $request->package_qty[$key] ) + $usercost ),
+                            ]);
+                        }
 
-                        $total = $total  + $payment->total;
+                        $total = $total  +  ( ($selPackage[0]['price'] * $request->package_qty[$key] ) + $usercost );
         
                         array_push($paymentId, $payment->id);
 
                         foreach($number_of_user as $val) {
                             PaymentsUsers::create([
                                 'user_id' => $val['user_id'],
-                                'payment_id' => $payment->id
+                                'payment_id' => $lastesPaymentId,
+                                'package_id' => $selPackage[0]['package_id'],
                             ]);
                         }
                     }
@@ -516,7 +548,8 @@ class Subscription
 
                     PaymentsUsers::create([
                         'user_id' => $request['customer_id'],
-                        'payment_id' => $payment->id
+                        'payment_id' => $payment->id,
+                        'package_id' => $selPackage[0]['package_id'],
                     ]);
         
                     array_push($paymentId, $payment->id);

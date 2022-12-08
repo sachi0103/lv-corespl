@@ -33,12 +33,11 @@ class DashboardController extends Controller
      */
 
     public function index()
-
     {
 
         $paymentCounts = Payment::count();
 
-        $userCounts = User::count();
+        $userCounts =  User::where('id',auth()->user()->id)->orWhere('Parent',auth()->user()->id)->count();
 
         $callLogsCount = CallLog::count();
 

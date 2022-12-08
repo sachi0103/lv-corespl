@@ -17,9 +17,22 @@ class AuthController extends Controller
         ]);
 
         if ($attempt) {
-            return redirect()->action([AccountController::class, 'create']);
+            if ((int)$request->get('is_admin')) {
+                return redirect()->route('admin.dashboard')->with('message', 'Invalid login details');
+            } else {
+                return redirect()->action([AccountController::class, 'create']);
+            }
         } else {
             return redirect()->route('login')->with('message', 'Invalid login details');
+        }
+    }
+
+    public function contact_us(Request $request) {
+
+        if (!empty($request->all())) {
+            Mail::to('support@corespl.com')->send(new ContactMail($request->all()));//support@corespl.com
+        } else {
+            return view('contact.index');
         }
     }
 }

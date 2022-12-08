@@ -129,15 +129,12 @@ $(function () {
                 caption: 'Number of User',
             },
             {
-                dataField: 'package_id',
-                caption: 'Package',
-                calculateCellValue: function (rowData) {
-                    return rowData.package.package_name;
-                }
-            },
-            {
                 dataField: 'subtotal',
                 caption: 'Subtotal',
+            },
+            {
+                dataField: 'charge_per_user',
+                caption: 'User Cost',
             },
             {
                 dataField: 'total',
@@ -177,6 +174,20 @@ $(function () {
                             caption: 'Email',
                             calculateCellValue: function (colData) {
                                 return colData.user.email;
+                            }
+                        },            
+                        {
+                            dataField: 'package_id',
+                            caption: 'Package',
+                            calculateCellValue: function (rowData) {
+                                return (rowData.package != null ) ? rowData.package.package_name : '';
+                            }
+                        },           
+                        {
+                            dataField: 'user_id',
+                            caption: 'Price',
+                            calculateCellValue: function (rowData) {
+                                return (rowData.package != null ) ? rowData.package.price : '';
                             }
                         },
                     ],

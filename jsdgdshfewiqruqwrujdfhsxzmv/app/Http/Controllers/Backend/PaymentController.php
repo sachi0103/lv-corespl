@@ -23,7 +23,7 @@ class PaymentController extends Controller
     {
         $user = auth()->user();
         
-        $payments = Payment::with(['payment_users','payment_users.user','package'])->where('user_id',$user->id)->get();
+        $payments = Payment::with(['payment_users','payment_users.user','payment_users.package'])->where('user_id',$user->id)->get();
 
        // dd($payments);
 

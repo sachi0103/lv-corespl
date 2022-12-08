@@ -73,7 +73,12 @@
                                 
                                 <div class="col-sm-8"><h5>Accounts Information</h5></div>
 
-                                <div class="col-sm-4"><a href="{{ route('admin.accounts.renew_all_plan' , base64_encode(auth()->user()->id)) }}" class="btn-sm btn-info pull-right">Renew All</a></div>
+                                <div class="col-sm-4">
+                                    <div class="pull-right"> 
+                                        <a href="{{ route('admin.accounts.renew_all_plan' , base64_encode(auth()->user()->id)) }}" class="btn btn-info">Renew All</a>
+                                        <a href="{{route('admin.accounts.create')}}" class="btn btn-primary">Create New</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
