@@ -112,7 +112,7 @@ $(function () {
             pageSize: 15,
         },
         filterRow: {
-            visible: true,
+            visible: false,
             applyFilter: 'auto',
         },
         searchPanel: {

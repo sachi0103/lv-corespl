@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Http\Controllers\Backend\AccountController;
 
+use Illuminate\Support\Facades\Mail;
+
+use App\Mail\ContactMail;
+
 class AuthController extends Controller
 {
     public function authenticate(Request $request)
@@ -31,8 +35,10 @@ class AuthController extends Controller
 
         if (!empty($request->all())) {
             Mail::to('support@corespl.com')->send(new ContactMail($request->all()));//support@corespl.com
+            
+            return redirect()->route('login')->with('message', 'Thank you for feedback');
         } else {
-            return view('contact.index');
+            return redirect()->route('login');
         }
     }
 }
