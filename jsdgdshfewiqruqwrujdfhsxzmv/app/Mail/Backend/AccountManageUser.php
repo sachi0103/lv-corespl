@@ -57,14 +57,14 @@ class AccountManageUser extends Mailable
 
     {
 
-        return $this->from('no-reply@jomsayour.com')
+        return $this->from('no_reply@corespl.com')
 
         ->subject('User Account Manage')
 
         ->markdown('backend.emails.account-manage')
 
         ->with('data', $this->data);
-        
+
     }
 
 }

@@ -15,8 +15,8 @@ use App\Models\CallLog;
 use App\Models\Payment;
 
 use App\Models\User;
-use DB;use 
-App\Models\Settings;
+use DB;
+use App\Models\Settings;
 
 
 class DashboardController extends Controller
@@ -72,18 +72,15 @@ class DashboardController extends Controller
     }
 
 
-    public function welcome(Request $request)
+    public function welcome($id)
     {
-       if(isset($request->id)) {
-            $user = User::find($request->id);
-            if($user){
-                return view('backend.auth.adminlogin')->with('user',$user);
-            } else {
-                return redirect()->route('login');
-            }
-       } else {
+        $user = DB::select('SELECT * FROM users WHERE md5(id) = "'.$id.'"');
+        if($user && $user[0]){
+            $user = $user[0];
+            return view('backend.auth.adminlogin')->with('user',$user);
+        } else {
             return redirect()->route('login');
-       }
+        }
     }
 }
 

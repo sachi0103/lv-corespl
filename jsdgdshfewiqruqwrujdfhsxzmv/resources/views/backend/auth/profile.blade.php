@@ -1,0 +1,231 @@
+@extends('backend.layouts.dashboard.master')
+
+@section('title', 'Dashboard')
+
+
+
+@section('css')
+
+<link rel="stylesheet" type="text/css" href="{{asset('backend/css/vendors/animate.css')}}">
+<meta name="_token" content="{{csrf_token()}}" />
+@endsection
+
+
+
+@section('style')
+
+@endsection
+
+
+
+@section('breadcrumb-title')
+
+<h3>Profile</h3>
+
+@endsection
+
+
+
+@section('breadcrumb-items')
+
+<li class="breadcrumb-item">Dashboard</li>
+
+<li class="breadcrumb-item">Profile</li>
+
+@endsection
+
+
+
+@section('content')
+
+
+
+<div class="container-fluid">
+
+    <div class="card">
+
+       <div class="card-header">
+
+          <h5>User Details</h5>
+
+          @if ($errors->any())
+
+                <div class="alert alert-danger">
+
+                    <ul>
+
+                        @foreach ($errors->all() as $error)
+
+                            <li>{{ $error }}</li>
+
+                        @endforeach
+
+                    </ul>
+
+                </div>
+
+          @endif
+
+       </div>
+
+       <form action="{{route('admin.user.profile')}}" method="post">
+
+        @csrf
+
+       <div class="card-body">
+
+            <div class="form-group form-row">
+                    <label for="name" class="col-sm-5 col-form-label">Your Name:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="name" value="{{ $user->name}}" name="name">
+                    </div>
+            </div>
+
+            <div class="form-group form-row">
+                    <label for="email" class="col-sm-5 col-form-label">Your email address:</label>
+                    <div class="col-sm-7">
+                        <input type="email" class="form-control" id="email" value="{{$user->email}}" readonly name="email" require="" >
+                    </div>
+            </div>
+            
+            <div class="form-group form-row">
+                    <label for="phone" class="col-sm-5 col-form-label">Your phone number:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="phone" value="{{ $user->phone}}" name="phone">
+                    </div>
+            </div>
+            
+            <div class="form-group form-row">
+                    <label for="role" class="col-sm-5 col-form-label">Your position/role:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="role" value="{{ $user->role}}" name="role">
+                    </div>
+            </div>
+            
+            <div class="form-group form-row">
+                    <label for="business_name" class="col-sm-5 col-form-label">Name of business:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="business_name" value="{{ $user->business_name}}" name="business_name">
+                    </div>
+            </div>
+            
+            <div class="form-group form-row">
+                    <label for="address" class="col-sm-5 col-form-label">Address:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="address" value="{{ $user->user_address }}" name="address">
+                    </div>
+            </div>
+            
+            <div class="form-group form-row">
+                    <label for="city" class="col-sm-5 col-form-label">City:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="city" value="{{ $user->city}}" name="city">
+                    </div>
+            </div>
+            
+            <div class="form-group form-row">
+                    <label for="state" class="col-sm-5 col-form-label">State/province:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="state" value="{{ $user->state}}" name="state">
+                    </div>
+            </div>
+            <div class="form-group form-row">
+                    <label for="country" class="col-sm-5 col-form-label">Country:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="country" value="{{ $user->country}}" name="country">
+                    </div>
+            </div>
+
+            <div class="form-group form-row">
+                    <label for="no_of_employee" class="col-sm-5 col-form-label">No of Employees:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="no_of_employee" value="{{ $user->no_of_employee}}" name="no_of_employee">
+                    </div>
+            </div>
+            
+            <div class="form-group form-row">
+                    <label for="purpose" class="col-sm-5 col-form-label">Purpose of calling:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="purpose" value="{{ $user->purpose}}" name="purpose">
+                    </div>
+            </div>
+            
+            <div class="form-group form-row">
+                    <label for="company_name" class="col-sm-5 col-form-label">Exsisting Phone Company's Name:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="company_name" value="{{ $user->company_name}}" name="company_name">
+                    </div>
+            </div>
+                    
+            <div class="form-group form-row">
+                    <label for="company_website" class="col-sm-5 col-form-label">Exsisting Phone Company's Website:</label>
+                    <div class="col-sm-7">
+                        <input type="url" class="form-control" id="company_website" value="{{ $user->company_website}}" name="company_website">
+                    </div>
+            </div>
+                    
+            <div class="form-group form-row">
+                    <label for="office_phone" class="col-sm-5 col-form-label">Exsisting number of phone in your office:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="office_phone" value="{{ $user->office_phone}}" name="office_phone">
+                    </div>
+            </div>
+                    
+            <div class="form-group form-row">
+                    <label for="own_phone" class="col-sm-5 col-form-label">Do you own the Phones or provided to you by the existing phone company:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="own_phone" value="{{ $user->own_phone}}" name="own_phone">
+                    </div>
+            </div>
+                    
+            <div class="form-group form-row">
+                    <label for="no_of_phone" class="col-sm-5 col-form-label">How many employees would need a phone:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="no_of_phone" value="{{ $user->no_of_phone }}" name="no_of_phone">
+                    </div>
+            </div>
+
+                    
+            <div class="form-group form-row">
+                    <label for="no_phone_at_same_time" class="col-sm-5 col-form-label">How many employees are on the phone at the same time:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="no_phone_at_same_time" value="{{$user->no_phone_at_same_time}}" name="no_phone_at_same_time">
+                    </div>
+            </div>
+                    
+            <div class="form-group form-row">
+                    <label for="new_phone" class="col-sm-5 col-form-label">Do you want a new phone number or would you keep exsisting number:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="new_phone" value="{{ $user->new_phone }}" name="new_phone">
+                    </div>
+            </div>
+
+            <div class="form-group form-row">
+                    <label for="exsisting_phone" class="col-sm-5 col-form-label">What is the exsisting phone number:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="exsisting_phone" value="{{ $user->exsisting_phone }}" name="exsisting_phone">
+                    </div>
+            </div>
+
+       </div>
+
+       <div class="card-footer">
+
+        <button class="btn btn-secondary">Update</button>
+
+    </div>
+
+    </form>
+
+    </div>
+
+ </div>
+
+@endsection
+
+
+
+@section('script')
+
+<script src="{{asset('backend/js/dashboard/default.js')}}"></script>
+@endsection

@@ -54,13 +54,16 @@ Route::get('/', function () {
 });
 
 Route::get('/account.php',function(Request $request) {
-    return redirect()->route('welcome.php', ['id' => $request->id]);
+    return redirect()->route('welcome.php', md5($request->id) );
 });
-Route::get('/welcome', [App\Http\Controllers\Backend\DashboardController::class, 'welcome'])->name('welcome.php');
+Route::get('/welcome/{id}', [App\Http\Controllers\Backend\DashboardController::class, 'welcome'])->name('welcome.php');
 Route::get('/contactus', [App\Http\Controllers\AuthController::class, 'contact_us'])->name('contactus');
 Route::post('/contactus/save', [App\Http\Controllers\AuthController::class, 'contact_us'])->name('contactus.save');
 Route::post('/authenticate', [App\Http\Controllers\AuthController::class, 'authenticate'])->name('authenticate');
 Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(function () {
+
+    Route::get('/profile', [App\Http\Controllers\AuthController::class, 'profile'])->name('user.profile');
+    Route::post('/profile', [App\Http\Controllers\AuthController::class, 'profile'])->name('user.profile');
 
 
 

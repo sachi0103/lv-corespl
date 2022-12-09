@@ -69,6 +69,16 @@
 
              <li class="sidebar-list">
 
+                <a class="sidebar-link sidebar-title {{ Route::currentRouteName()=='admin.user.profile' ? 'active' : '' }}"  href="{{route('admin.user.profile')}}">
+
+                  <i data-feather="user"></i><span>Profile</span>
+
+                </a>
+
+             </li>
+
+             <li class="sidebar-list">
+
                 <a class="sidebar-link sidebar-title" href="{{ route('logout') }}" onclick="event.preventDefault();
 
               document.getElementById('logout-form').submit();">
