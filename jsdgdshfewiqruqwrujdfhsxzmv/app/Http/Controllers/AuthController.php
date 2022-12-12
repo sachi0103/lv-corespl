@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Mail\ContactMail;
 use App\Models\User;
+use App\Models\Companies;
 
 class AuthController extends Controller
 {
@@ -45,30 +46,61 @@ class AuthController extends Controller
 
     public function profile(Request $request) {
             
-        $user = User::find(auth()->user()->id);
+        $user = User::with('companies')->find(auth()->user()->id);
 
         if (!empty($request->all())) {   
             
             $user->name = $request->name;
             $user->phone = $request->phone;
             $user->user_address = $request->user_address;
-            $user->role = $request->role;
-            $user->business_name = $request->business_name;
-            $user->City = $request->City;
-            $user->state = $request->state;
-            $user->country = $request->country;
-            $user->no_of_employee = $request->no_of_employee;
-            $user->purpose = $request->purpose;
-            $user->company_name = $request->company_name;
-            $user->company_website = $request->company_website;
-            $user->office_phone = $request->office_phone;
-            $user->own_phone = $request->own_phone;
-            $user->no_of_phone = $request->no_of_phone;
-            $user->no_phone_at_same_time = $request->no_phone_at_same_time;
-            $user->new_phone = $request->new_phone;
-            $user->exsisting_phone = $request->exsisting_phone;
+
+            $companies = Companies::where('user_id',$user->id)->first();
+            if (!empty($companies)) {
+                
+                $companies->user_id = $user->id;
+                $companies->role = $request->role;
+                $companies->business_name = $request->business_name;
+                $companies->City = $request->City;
+                $companies->state = $request->state;
+                $companies->country = $request->country;
+                $companies->no_of_employee = $request->no_of_employee;
+                $companies->purpose = $request->purpose;
+                $companies->company_name = $request->company_name;
+                $companies->company_website = $request->company_website;
+                $companies->office_phone = $request->office_phone;
+                $companies->own_phone = $request->own_phone;
+                $companies->no_of_phone = $request->no_of_phone;
+                $companies->no_phone_at_same_time = $request->no_phone_at_same_time;
+                $companies->new_phone = $request->new_phone;
+                $companies->exsisting_phone = $request->exsisting_phone;
+                $companies->save();
+
+            } else {
+
+                $companies = new Companies();
+                $companies->user_id = $user->id;
+                $companies->role = $request->role;
+                $companies->business_name = $request->business_name;
+                $companies->City = $request->City;
+                $companies->state = $request->state;
+                $companies->country = $request->country;
+                $companies->no_of_employee = $request->no_of_employee;
+                $companies->purpose = $request->purpose;
+                $companies->company_name = $request->company_name;
+                $companies->company_website = $request->company_website;
+                $companies->office_phone = $request->office_phone;
+                $companies->own_phone = $request->own_phone;
+                $companies->no_of_phone = $request->no_of_phone;
+                $companies->no_phone_at_same_time = $request->no_phone_at_same_time;
+                $companies->new_phone = $request->new_phone;
+                $companies->exsisting_phone = $request->exsisting_phone;
+                $companies->save();
+            }
 
             $user->save();
+
+            $user = User::with('companies')->find(auth()->user()->id);
+
             $message =  'User details updated successfully';
             return view('backend.auth.profile')->with(compact('user','message'));
         } else {
