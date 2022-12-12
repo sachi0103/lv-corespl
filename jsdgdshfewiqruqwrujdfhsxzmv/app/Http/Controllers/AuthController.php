@@ -38,7 +38,7 @@ class AuthController extends Controller
         if (!empty($request->all())) {
             Mail::to('support@corespl.com')->send(new ContactMail($request->all()));//support@corespl.com
             
-            return redirect()->route('login')->with('message', 'Thank you for feedback');
+            return redirect()->route('welcome.php',md5($request->id))->with('success', 'Thank you for your request. My support will contact you soon');
         } else {
             return redirect()->route('login');
         }
@@ -102,7 +102,7 @@ class AuthController extends Controller
             $user = User::with('companies')->find(auth()->user()->id);
 
             $message =  'User details updated successfully';
-            return view('backend.auth.profile')->with(compact('user','message'));
+            return view('backend.auth.profile')->with(compact('user'))->with('success',$message);
         } else {
             return view('backend.auth.profile')->with(compact('user'));
         }

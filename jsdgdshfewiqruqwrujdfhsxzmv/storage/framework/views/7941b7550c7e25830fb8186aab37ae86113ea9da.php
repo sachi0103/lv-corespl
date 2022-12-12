@@ -7,103 +7,185 @@
 <div class="container-fluid">
 
    <div class="row">
+      <div class="col-xl-6">
+         <img class="bg-img-cover bg-center" src="<?php echo e(asset('backend/images/login/login-banner.png')); ?>" alt="looginpage">
+      </div>
+      <div class="col-xl-6">
+            <div class="row">
+               <a class="logo text-center" href="<?php echo e(route('login')); ?>">
 
-      <div class="col-xl-6"><img class="bg-img-cover bg-center" src="<?php echo e(asset('backend/images/login/login-banner.png')); ?>" alt="looginpage"></div>
+                  <img class="img-fluid for-light" src="<?php echo e(asset('backend/images/logo/logo.jpeg')); ?>" alt="looginpage" width="300">
 
-      <div class="col-xl-6 p-0">
+                  <img class="img-fluid for-dark" src="<?php echo e(asset('backend/images/logo/logo.jpeg')); ?>" alt="looginpage" width="300">
 
-         <div class="login-card">
+               </a>
+            </div>
+            <div class="row">
+               <div class="col-md-12">
+                  <div style="margin:3%">
+                     <div class="col-md-12">
+                        <?php if(session('success')): ?>
+                           <div class="alert alert-success">
+                              <?php echo e(session('success')); ?>
 
-            <div>
-
-               <div>
-
-                   <a class="logo text-left" href="<?php echo e(route('login')); ?>">
-
-                        <img class="img-fluid for-light" src="<?php echo e(asset('backend/images/logo/logo.jpeg')); ?>" alt="looginpage" width="300">
-
-                        <img class="img-fluid for-dark" src="<?php echo e(asset('backend/images/logo/logo.jpeg')); ?>" alt="looginpage" width="300">
-
-                    </a>
-
-                </div>
-
-               <div class="login-main">
-
-               <form class="theme-form needs-validation"  method="POST" action="<?php echo e(route('authenticate')); ?>" novalidate="">
-
-                      <?php echo csrf_field(); ?>
-
-                     <h4> Welcome back:</h4>
-                     <input type="hidden" name="email" value="<?php echo e($user->email); ?>" />
-                     
-                     <input type="hidden" value="0" name="is_admin" />
-                     <div class="form-group">
-
-                        <label><b><?php echo e($user->email); ?></b></label>
-
+                           </div>
+                        <?php endif; ?>
                      </div>
-
-                     <h4> Please enter you below to verify your account:</h4>
-
-                     <div class="form-group">
-
-                        <label class="col-form-label">Password</label>
-
-                        <input class="form-control <?php $__errorArgs = ['password'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> border-danger <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" type="password" name="password" required="" placeholder="*********">
-
-                        <div class="show-hide"><span class="show"></span></div>
-
-                        <?php $__errorArgs = ['password'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-
-                        <span class="form-text text-danger"><?php echo e($message); ?></span>
-
-                        <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-
-                        <div class="invalid-tooltip">Please enter password.</div>
-
-                     </div>
-
-                     <div class="form-group mb-0">
-
-                        <div class="checkbox p-0">
-
-                           <input type="checkbox" name="remember" id="remember" <?php echo e(old('remember') ? 'checked' : ''); ?>>
-
-                           <label class="text-muted" for="checkbox1">Remember password</label>
-
+                     <form action="<?php echo e(route('contactus.save')); ?>" method="POST">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" value="<?php echo e($user->id); ?>" name="id" />
+                        <div class="form-group form-row">
+                              <label for="name" class="col-sm-5 col-form-label">Your Name:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="name" value="" name="name" require>
+                              </div>
                         </div>
 
-                        <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+                        <div class="form-group form-row">
+                              <label for="email" class="col-sm-5 col-form-label">Your email address:</label>
+                              <div class="col-sm-7">
+                                 <input type="email" class="form-control" id="email" value="<?php echo e($user->email); ?>" readonly name="email" require>
+                              </div>
+                        </div>
+                        
+                        <div class="form-group form-row">
+                              <label for="phone" class="col-sm-5 col-form-label">Your phone number:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="phone" value="" name="phone" require>
+                              </div>
+                        </div>
+                        
+                        <div class="form-group form-row">
+                              <label for="role" class="col-sm-5 col-form-label">Your position/role:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="role" value="" name="role" require>
+                              </div>
+                        </div>
+                        
+                        <div class="form-group form-row">
+                              <label for="business_name" class="col-sm-5 col-form-label">Name of business:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="business_name" value="" name="business_name" require>
+                              </div>
+                        </div>
+                        
+                        <div class="form-group form-row">
+                              <label for="address" class="col-sm-5 col-form-label">Address:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="address" value="" name="address" require>
+                              </div>
+                        </div>
+                        
+                        <div class="form-group form-row">
+                              <label for="city" class="col-sm-5 col-form-label">City:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="city" value="" name="city" require>
+                              </div>
+                        </div>
+                        
+                        <div class="form-group form-row">
+                              <label for="state" class="col-sm-5 col-form-label">State/province:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="state" value="" name="state" require>
+                              </div>
+                        </div>
+                        <div class="form-group form-row">
+                              <label for="country" class="col-sm-5 col-form-label">Country:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="country" value="" name="country" require>
+                              </div>
+                        </div>
 
-                     </div>
+                        <div class="form-group form-row">
+                              <label for="no_of_employee" class="col-sm-5 col-form-label">No of Employees:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="no_of_employee" value="" name="no_of_employee" require>
+                              </div>
+                        </div>
+                        
+                        <div class="form-group form-row">
+                              <label for="purpose" class="col-sm-5 col-form-label">Purpose of calling:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="purpose" value="" name="purpose" require>
+                              </div>
+                        </div>
+                     
+                        <div class="form-group form-row">
+                              <label for="company_name" class="col-sm-5 col-form-label">Exsisting Phone Company's Name:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="company_name" value="" name="company_name" require>
+                              </div>
+                        </div>
+                              
+                        <div class="form-group form-row">
+                              <label for="company_website" class="col-sm-5 col-form-label">Exsisting Phone Company's Website:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="company_website" value="" name="company_website" require>
+                              </div>
+                        </div>
+                              
+                        <div class="form-group form-row">
+                              <label for="office_phone" class="col-sm-5 col-form-label">Exsisting number of phone in your office:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="office_phone" value="" name="office_phone" require>
+                              </div>
+                        </div>
+                              
+                        <div class="form-group form-row">
+                              <label for="own_phone" class="col-sm-5 col-form-label">Do you own the Phones or provided to you by the existing phone company:</label>
+                              <div class="col-sm-7">
+                                 <select class="form-control" id="own_phone" name="own_phone" require>
+                                    <option value="owned">owned</option>
+                                    <option value="leased">leased</option>
+                                 </select>
+                              </div>
+                        </div>
+                              
+                        <div class="form-group form-row">
+                              <label for="no_of_phone" class="col-sm-5 col-form-label">How many employees would need a phone:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="no_of_phone" value="" name="no_of_phone" require>
+                              </div>
+                        </div>
 
-                     <p class="mt-4 mb-0"><a class="ml-2" href="<?php echo e(route('password.request')); ?>">Forgot password?</a></p>
+                              
+                        <div class="form-group form-row">
+                              <label for="no_phone_at_same_time" class="col-sm-5 col-form-label">How many employees are on the phone at the same time:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="no_phone_at_same_time" value="" name="no_phone_at_same_time" require>
+                              </div>
+                        </div>
+                              
+                        <div class="form-group form-row">
+                              <label for="new_phone" class="col-sm-5 col-form-label">Do you want a new phone number or would you keep exsisting number:</label>
+                              <div class="col-sm-7">
+                                 <select class="form-control" id="new_phone" name="new_phone" require>
+                                    <option value="Require New Number">Require New Number</option>
+                                    <option value="Keep Existing Number">Keep Existing Number</option>
+                                 </select>
+                              </div>
+                        </div>
 
-                  </form>
+                        <div class="form-group form-row">
+                              <label for="exsisting_phone" class="col-sm-5 col-form-label">What is the exsisting phone number:</label>
+                              <div class="col-sm-7">
+                                 <input type="text" class="form-control" id="exsisting_phone" value="" name="exsisting_phone" require>
+                              </div>
+                        </div>
 
+                        <div class="form-group form-row">
+                              <div class="col-sm-12">
+                                 <div class="pull-right" style="text-align: end;">
+                                    <button type="submit" class="btn btn-success">Submit</button>
+                                 </div>
+                              </div>
+                        </div>
+                     </form>
+                  </div>
                </div>
-
             </div>
-
          </div>
-
       </div>
-
    </div>
 
 </div>

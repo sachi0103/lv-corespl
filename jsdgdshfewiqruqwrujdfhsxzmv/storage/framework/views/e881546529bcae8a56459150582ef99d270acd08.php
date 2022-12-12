@@ -6,14 +6,25 @@
 
 <?php $__env->startSection('css'); ?>
 
-<link rel="stylesheet" type="text/css" href="<?php echo e(asset('backend/css/vendors/animate.css')); ?>">
-
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('backend/css/vendors/animate.css')); ?>" />
+<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.1.6/css/dx.common.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.1.6/css/dx.light.css" />
 <?php $__env->stopSection(); ?>
 
 
 
 <?php $__env->startSection('style'); ?>
+<style>
+    #gridContainer {
+        height: 440px;
+    }
 
+    .master-detail-caption {
+        padding: 0 0 5px 10px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+</style>
 <?php $__env->stopSection(); ?>
 
 
@@ -72,71 +83,8 @@
 
                         </div>
 
-                        <div class="table-responsive">
-
-                            <table class="table">
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th scope="col">#</th>
-
-                                        
-
-                                        <th scope="col">Number of Packages</th>
-
-                                        <th scope="col">Number of User</th>
-
-                                        <th scope="col">Charge per user</th>
-
-                                        <th scope="col">Charge per Package</th>
-
-                                        <th scope="col">Subtotal</th>
-
-                                        <th scope="col">Total</th>
-
-                                        <th scope="col">Created</th>
-                                    </tr>
-
-                                </thead>
-
-                                <tbody>
-
-                                    <?php $__empty_1 = true; $__currentLoopData = $payments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-
-                                    <tr>
-
-                                        <th scope="row"><?php echo e($key+1); ?></th>
-
-                                        
-
-                                        <td><?php echo e($payment->number_of_packages); ?></td>
-
-                                        <td><?php echo e($payment->number_of_users); ?></td>
-
-                                        <td>$ <?php echo e($payment->charge_per_user); ?></td>
-
-                                        <td>$ <?php echo e($payment->charge_per_package); ?></td>
-
-                                        <td>$ <?php echo e($payment->subtotal); ?></td>
-
-                                        <td>$ <?php echo e($payment->total); ?></td>
-
-                                        <td><?php echo e(date('Y-m-d',strtotime($payment->created_at))); ?></td>
-
-                                    </tr>
-
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-
-                                    <?php endif; ?>
-
-
-
-                                </tbody>
-
-                            </table>
-
+                        <div class="card-body">
+                                <div id="payment-table"></div>
                         </div>
 
                     </div>
@@ -152,7 +100,103 @@
 <?php $__env->startSection('script'); ?>
 
 <script src="<?php echo e(asset('backend/js/dashboard/default.js')); ?>"></script>
+<script src="https://cdn3.devexpress.com/jslib/22.1.6/js/dx.all.js"></script>
+<script type="text/javascript">
+$(function () {
+    var payment = <?php echo (!empty($payments)) ? json_encode($payments) : '[]'; ?>;
+    $('#payment-table').dxDataGrid({
+        dataSource: payment,
+        keyExpr: 'id',
+        showBorders: true,
+        paging: {
+            pageSize: 15,
+        },
+        filterRow: {
+            visible: false,
+            applyFilter: 'auto',
+        },
+        searchPanel: {
+            visible: true,
+            width: 240,
+            placeholder: 'Search...',
+        },
+        headerFilter: {
+            visible: true,
+        },
+        columns: [
+            {
+                dataField: 'number_of_users',
+                caption: 'Number of User',
+            },
+            {
+                dataField: 'subtotal',
+                caption: 'Subtotal',
+            },
+            {
+                dataField: 'charge_per_user',
+                caption: 'User Cost',
+            },
+            {
+                dataField: 'total',
+                caption: 'Total',
+            },
+            {
+                dataField: 'created_at',
+                caption: 'Created',
+                dataType: 'date',
+            },
+        ],
+        masterDetail: {
+            enabled: true,
+            template(container, options) {
+                const currentUserData = options.data.payment_users;
+                $('<div>')
+                .addClass('master-detail-caption')
+                .text(`User Details: `)
+                .appendTo(container);
 
+                $('<div>')
+                .dxDataGrid({
+                    columnAutoWidth: true,
+                    showBorders: true,
+                    dataSource: currentUserData,
+                    keyExpr: 'id',
+                    columns: [
+                        {
+                            dataField: 'id',
+                            caption: 'Name',
+                            calculateCellValue: function (colData) {
+                                return colData.user.name;
+                            }
+                        },
+                        {
+                            dataField: 'payment_id',
+                            caption: 'Email',
+                            calculateCellValue: function (colData) {
+                                return colData.user.email;
+                            }
+                        },            
+                        {
+                            dataField: 'package_id',
+                            caption: 'Package',
+                            calculateCellValue: function (rowData) {
+                                return (rowData.package != null ) ? rowData.package.package_name : '';
+                            }
+                        },           
+                        {
+                            dataField: 'user_id',
+                            caption: 'Price',
+                            calculateCellValue: function (rowData) {
+                                return (rowData.package != null ) ? rowData.package.price : '';
+                            }
+                        },
+                    ],
+                }).appendTo(container);
+            },
+        },
+    });
+});
+</script>
 <?php $__env->stopSection(); ?>
 
 

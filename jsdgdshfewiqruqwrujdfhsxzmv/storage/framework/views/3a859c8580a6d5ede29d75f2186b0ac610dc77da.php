@@ -7,6 +7,7 @@
 <?php $__env->startSection('css'); ?>
 
 <link rel="stylesheet" type="text/css" href="<?php echo e(asset('backend/css/vendors/animate.css')); ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('backend/css/vendors/datatables.css')); ?>">
 
 <?php $__env->stopSection(); ?>
 
@@ -68,13 +69,22 @@
 
                         <div class="card-header">
 
-                            <h5>Accounts Information</h5>
+                            <div class="row">
+                                
+                                <div class="col-sm-8"><h5>Accounts Information</h5></div>
 
+                                <div class="col-sm-4">
+                                    <div class="pull-right"> 
+                                        <a href="<?php echo e(route('admin.accounts.renew_all_plan' , base64_encode(auth()->user()->id))); ?>" class="btn btn-info">Renew All</a>
+                                        <a href="<?php echo e(route('admin.accounts.create')); ?>" class="btn btn-primary">Create New</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="table-responsive">
+                        <div class="card-body">
 
-                            <table class="table">
+                            <table class="table table-striped" id="account-table">
 
                                 <thead>
 
@@ -88,7 +98,7 @@
 
                                         <th scope="col">Purchase Date</th>
 
-                                        <td scope="col">Plan Purchased</td>
+                                        <th scope="col">Plan Purchased</th>
 
                                         <th scope="col">Remaining Minutes</th>
 
@@ -101,7 +111,7 @@
                                 </thead>
 
                                 <tbody>
-
+                                    
                                     <?php $__empty_1 = true; $__currentLoopData = $accounts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $account): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
 
                                     <tr>
@@ -132,11 +142,8 @@
                                     </tr>
 
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-
+                                    <tr><td colpsan="8">No data found </td></tr>
                                     <?php endif; ?>
-
-
-
                                 </tbody>
 
                             </table>
@@ -156,6 +163,12 @@
 <?php $__env->startSection('script'); ?>
 
 <script src="<?php echo e(asset('backend/js/dashboard/default.js')); ?>"></script>
+<script src="<?php echo e(asset('backend/js/datatable/jquery.dataTables.min.js')); ?>"></script>
+<script type="text/javascript">
+  $(function () {
+    var table = $('#account-table').DataTable();
+  });
+</script>
 <?php $__env->stopSection(); ?>
 
 

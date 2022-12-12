@@ -23,8 +23,16 @@
             <div class="row">
                <div class="col-md-12">
                   <div style="margin:3%">
+                     <div class="col-md-12">
+                        @if (session('success'))
+                           <div class="alert alert-success">
+                              {{ session('success') }}
+                           </div>
+                        @endif
+                     </div>
                      <form action="{{ route('contactus.save')}}" method="POST">
                         @csrf
+                        <input type="hidden" value="{{$user->id}}" name="id" />
                         <div class="form-group form-row">
                               <label for="name" class="col-sm-5 col-form-label">Your Name:</label>
                               <div class="col-sm-7">
@@ -111,7 +119,7 @@
                         <div class="form-group form-row">
                               <label for="company_website" class="col-sm-5 col-form-label">Exsisting Phone Company's Website:</label>
                               <div class="col-sm-7">
-                                 <input type="url" class="form-control" id="company_website" value="" name="company_website" require>
+                                 <input type="text" class="form-control" id="company_website" value="" name="company_website" require>
                               </div>
                         </div>
                               
@@ -125,7 +133,10 @@
                         <div class="form-group form-row">
                               <label for="own_phone" class="col-sm-5 col-form-label">Do you own the Phones or provided to you by the existing phone company:</label>
                               <div class="col-sm-7">
-                                 <input type="text" class="form-control" id="own_phone" value="" name="own_phone" require>
+                                 <select class="form-control" id="own_phone" name="own_phone" require>
+                                    <option value="owned">owned</option>
+                                    <option value="leased">leased</option>
+                                 </select>
                               </div>
                         </div>
                               
@@ -147,7 +158,10 @@
                         <div class="form-group form-row">
                               <label for="new_phone" class="col-sm-5 col-form-label">Do you want a new phone number or would you keep exsisting number:</label>
                               <div class="col-sm-7">
-                                 <input type="text" class="form-control" id="new_phone" value="" name="new_phone" require>
+                                 <select class="form-control" id="new_phone" name="new_phone" require>
+                                    <option value="Require New Number">Require New Number</option>
+                                    <option value="Keep Existing Number">Keep Existing Number</option>
+                                 </select>
                               </div>
                         </div>
 
