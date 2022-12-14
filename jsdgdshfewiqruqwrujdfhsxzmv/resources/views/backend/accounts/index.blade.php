@@ -122,13 +122,13 @@
 
                                         <td>{{$account->email}}</td>
 
-                                        <td>{{$account->purchase_date}}</td>
+                                        <td>{{date('Y-m-d',strtotime($account->created_at))}}</td>
 
                                         <td>{{$account->package_name}}</td>
 
                                         <td>{{$account->remaining_minutes}}</td>
 
-                                        <td> {{ ( in_array($account->package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime($account->purchase_date) ) ) : '' }}</td>
+                                        <td> {{ ( $account->expire_date ) ? date("Y-m-d",strtotime($account->expire_date) ) : '' }}</td>
 
                                         <td> 
                                             

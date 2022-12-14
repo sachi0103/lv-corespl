@@ -245,13 +245,13 @@
 
                             <th>{{$account->email}}</th>
 
-                            <th>{{$account->purchase_date}}</th>
+                            <th>{{date('Y-m-d',strtotime($account->created_at))}}</th>
 
                             <th>{{$account->package_name}}</th>
 
                             <th>{{$account->remaining_minutes}}</th>
 
-                            <th> {{ ( in_array($account->package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime($account->purchase_date) ) ) : '' }}</th>
+                            <th> {{ ( $account->expire_date ) ? date("Y-m-d",strtotime($account->expire_date) ) : '' }}</th>
 
                             <th> 
                                 
@@ -265,6 +265,7 @@
                         </tr>
 
                         @empty
+                        
 
                           <tr><th colspan="8" align="center">No data found </th></tr>
                       

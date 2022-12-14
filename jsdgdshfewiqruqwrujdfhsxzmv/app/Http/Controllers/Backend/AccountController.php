@@ -68,14 +68,14 @@ class AccountController extends Controller
         $userIds = User::where('Parent',auth()->user()->id)->get()->toArray();
 
         $str = 'SELECT * FROM (
-            SELECT customer_packages.id AS customer_packages_id,packages.package_name,customer_packages.package_id,customer_packages.customer_id,customer_packages.amount,customer_packages.purchase_date,customer_packages.allowed_minutes,customer_packages.remaining_minutes,users.name,users.email 
+            SELECT customer_packages.id AS customer_packages_id,packages.package_name,customer_packages.package_id,customer_packages.customer_id,customer_packages.amount,customer_packages.expire_date,customer_packages.allowed_minutes,customer_packages.remaining_minutes,users.name,users.email,customer_packages.created_at
             FROM customer_packages 
             INNER JOIN packages ON packages.package_id = customer_packages.package_id 
             INNER JOIN users ON users.id = customer_packages.customer_id 
             WHERE customer_packages.id IN ( 
                 SELECT MAX(id) FROM customer_packages WHERE customer_packages.customer_id IN ("'.implode('","',array_column($userIds,'id')).'") GROUP BY customer_id ) 
             UNION 
-            SELECT customer_packages.id AS customer_packages_id,packages.package_name,customer_packages.package_id,customer_packages.customer_id,customer_packages.amount,customer_packages.purchase_date,customer_packages.allowed_minutes,customer_packages.remaining_minutes,users.name,users.email 
+            SELECT customer_packages.id AS customer_packages_id,packages.package_name,customer_packages.package_id,customer_packages.customer_id,customer_packages.amount,customer_packages.expire_date,customer_packages.allowed_minutes,customer_packages.remaining_minutes,users.name,users.email,customer_packages.created_at
             FROM customer_packages 
             INNER JOIN packages ON packages.package_id = customer_packages.package_id 
             INNER JOIN users ON users.id = customer_packages.customer_id 
@@ -225,7 +225,7 @@ class AccountController extends Controller
             //get all login user 
             $userIds = User::where('id',$clientId)->orWhere('Parent',$clientId)->get()->toArray();
 
-            $accounts = DB::select('SELECT customer_packages.id AS customer_packages_id,packages.package_name,customer_packages.package_id,customer_packages.customer_id,customer_packages.amount,customer_packages.purchase_date,customer_packages.allowed_minutes,customer_packages.remaining_minutes,users.name,users.email,customer_packages.country_id FROM customer_packages INNER JOIN packages ON packages.package_id = customer_packages.package_id INNER JOIN users ON users.id = customer_packages.customer_id WHERE customer_packages.id IN ( SELECT MAX(id) FROM customer_packages WHERE customer_packages.customer_id IN ("'.implode('","',array_column($userIds,'id')).'") GROUP BY customer_id ) ORDER BY customer_packages.id DESC');
+            $accounts = DB::select('SELECT customer_packages.id AS customer_packages_id,packages.package_name,customer_packages.package_id,customer_packages.customer_id,customer_packages.amount,customer_packages.expire_date,customer_packages.allowed_minutes,customer_packages.remaining_minutes,users.name,users.email,customer_packages.country_id FROM customer_packages INNER JOIN packages ON packages.package_id = customer_packages.package_id INNER JOIN users ON users.id = customer_packages.customer_id WHERE customer_packages.id IN ( SELECT MAX(id) FROM customer_packages WHERE customer_packages.customer_id IN ("'.implode('","',array_column($userIds,'id')).'") GROUP BY customer_id ) ORDER BY customer_packages.id DESC');
 
             if (!empty($accounts)) {
 

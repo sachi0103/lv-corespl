@@ -77,8 +77,8 @@ class Subscription
         try{
 
             $remaining_minutes = ($custPackageDetails->remaining_minutes > 0) ? ( $custPackageDetails->remaining_minutes + $packageDetails->call_minutes ) : $packageDetails->call_minutes;
-
-            CustomerPackage::where('id',$custPackageDetails->id)->update(['remaining_minutes'=>$remaining_minutes,'updated_at'=>date('Y-m-d H:i:s'),'purchase_date'=>date('Y-m-d')]);
+            
+            CustomerPackage::where('id',$custPackageDetails->id)->update(['remaining_minutes'=>$remaining_minutes,'updated_at'=>date('Y-m-d H:i:s'),'expire_date'=>( in_array($packageDetails->package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime(now()) ) ) : null]);
 
             $payment = Payment::create([
 
@@ -164,8 +164,8 @@ class Subscription
                 $packageDetails = Package::find($custPackageDetails->package_id);
 
                 $remaining_minutes = ($custPackageDetails->remaining_minutes > 0) ? ( $custPackageDetails->remaining_minutes + $packageDetails->call_minutes ) : $packageDetails->call_minutes;
-
-                CustomerPackage::where('id',$custPackageDetails->customer_packages_id)->update(['remaining_minutes'=>$remaining_minutes,'updated_at'=>date('Y-m-d H:i:s'),'purchase_date'=>date('Y-m-d')]);
+                
+                CustomerPackage::where('id',$custPackageDetails->customer_packages_id)->update(['remaining_minutes'=>$remaining_minutes,'updated_at'=>date('Y-m-d H:i:s'),'expire_date'=>( in_array($packageDetails->package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime(now()) ) ) : null]);
 
                 if($key == 0) {
                     
@@ -298,7 +298,7 @@ class Subscription
 
                     'amount' => $selPackage[0]['price'],
 
-                    'purchase_date' => now(),
+                    'expire_date' => ( in_array($selPackage[0]['package_id'],[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime(now()) ) ) : null,
 
                     'has_paid' => 1,
 
@@ -480,7 +480,7 @@ class Subscription
                 
                         'amount' => ( $selPackage[0]['price'] * $request->package_qty[$key] ),
                 
-                        'purchase_date' => now(),
+                        'expire_date' => ( in_array($selPackage[0]['package_id'],[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime(now()) ) ) : null,
                 
                         'has_paid' => 1,
                 

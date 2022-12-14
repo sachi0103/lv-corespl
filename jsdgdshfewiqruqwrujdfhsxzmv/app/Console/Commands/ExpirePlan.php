@@ -42,7 +42,7 @@ class ExpirePlan extends Command
     {
         try {
             //code...
-            $customer_package_list = CustomerPackage::where('remaining_minutes','!=',0)->where(\DB::raw('DATE_SUB(purchase_date, INTERVAL -1 MONTH)'),'=',date('Y-m-d'))->get();
+            $customer_package_list = CustomerPackage::where('remaining_minutes','!=',0)->where('expire_date',date('Y-m-d'))->get();
             if (!empty($customer_package_list)) {
                 foreach ($customer_package_list as $key => $value) {
                     CustomerPackage::where('id','=',$value->id)->update(['remaining_minutes'=>0,'updated_at'=>date('Y-m-d H:i:s')]);
