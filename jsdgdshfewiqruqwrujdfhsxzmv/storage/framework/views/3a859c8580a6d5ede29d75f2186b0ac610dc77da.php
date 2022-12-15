@@ -122,13 +122,13 @@
 
                                         <td><?php echo e($account->email); ?></td>
 
-                                        <td><?php echo e($account->purchase_date); ?></td>
+                                        <td><?php echo e(date('Y-m-d',strtotime($account->created_at))); ?></td>
 
                                         <td><?php echo e($account->package_name); ?></td>
 
                                         <td><?php echo e($account->remaining_minutes); ?></td>
 
-                                        <td> <?php echo e(( in_array($account->package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime($account->purchase_date) ) ) : ''); ?></td>
+                                        <td> <?php echo e(( $account->expire_date ) ? date("Y-m-d",strtotime($account->expire_date) ) : ''); ?></td>
 
                                         <td> 
                                             

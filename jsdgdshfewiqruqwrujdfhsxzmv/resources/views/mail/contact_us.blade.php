@@ -16,4 +16,8 @@
 <p>How many employees would need a phone: {{ $data['no_of_phone'] }}</p> <br/>
 <p>How many employees are on the phone at the same time: {{ $data['no_phone_at_same_time'] }}</p> <br/>
 <p>Do you want a new phone number or would you keep exsisting number: {{ $data['new_phone'] }}</p> <br/>
+<?php if($data['new_phone'] == "Require New Number") { ?>
+<p>Enter your desired area code and last 4 digits? : {{ $data['new_area_code']. ' '.$data['new_phone_last'] }}</p> <br/>
+<?php } else { ?>
 <p>What is the exsisting phone number: {{ $data['exsisting_phone'] }}</p> <br/>
+<?php } ?>

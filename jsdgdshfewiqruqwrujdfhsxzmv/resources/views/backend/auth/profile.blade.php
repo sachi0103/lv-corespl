@@ -195,21 +195,33 @@
                         <input type="text" class="form-control" id="no_phone_at_same_time" value="{{($user->companies) ? $user->companies->no_phone_at_same_time : '' }}" name="no_phone_at_same_time">
                     </div>
             </div>
-                    
+
             <div class="form-group form-row">
                     <label for="new_phone" class="col-sm-5 col-form-label">Do you want a new phone number or would you keep exsisting number:</label>
                     <div class="col-sm-7">
                         <select class="form-control" id="new_phone" name="new_phone" require>
-                            <option value="Require New Number" {{ ($user->companies && $user->companies->new_phone == 'Require New Number') ? 'selected=""' : '' }} >Require New Number</option>
-                            <option value="Keep Existing Number" {{ ($user->companies && $user->companies->new_phone == 'Keep Existing Number') ? 'selected=""' : '' }} >Keep Existing Number</option>
+                        <option value="Require New Number" {{($user->companies && $user->companies->new_phone == "Require New Number") ? 'selected=""' : '' }}>Require New Number</option>
+                        <option value="Keep Existing Number" {{($user->companies && $user->companies->new_phone == "Keep Existing Number") ? 'selected=""' : '' }}>Keep Existing Number</option>
                         </select>
                     </div>
             </div>
+                    
+            <div class="form-group form-row new_phone" <?php echo ($user->companies && $user->companies->new_phone == "Keep Existing Number") ? 'style="display:none;"' : '';?>>
+                    <label for="new_phone" class="col-sm-5 col-form-label">Enter your desired area code and last 4 digits<a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Our technicians will try to find the number of your choice but we cannot guarantee aquire">?</a></label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="new_area_code" value="{{($user->companies) ? $user->companies->new_area_code : '' }}" name="new_area_code" require placeholder="Area Code">
+                    </div>
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="new_phone_last" value="{{($user->companies) ? $user->companies->new_phone_last : '' }}" name="new_phone_last" require placeholder="Last 4 digits">
+                    </div>
+            </div>
 
-            <div class="form-group form-row">
+            <div class="form-group form-row exsisting_phone" <?php echo ($user->companies && $user->companies->new_phone == "Require New Number") ? 'style="display:none;"' : '';?> >
                     <label for="exsisting_phone" class="col-sm-5 col-form-label">What is the exsisting phone number:</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="exsisting_phone" value="{{ ($user->companies) ? $user->companies->exsisting_phone : '' }}" name="exsisting_phone">
+                        <input type="text" class="form-control" id="exsisting_phone" value="{{($user->companies) ? $user->companies->exsisting_phone : '' }}" name="exsisting_phone" require>
                     </div>
             </div>
 
@@ -234,4 +246,15 @@
 @section('script')
 
 <script src="{{asset('backend/js/dashboard/default.js')}}"></script>
+<script>
+$('#new_phone').on('change',function(){
+   if (this.value == "Require New Number") {
+      $('.new_phone').show();
+      $('.exsisting_phone').hide();
+   } else {
+      $('.new_phone').hide();
+      $('.exsisting_phone').show();
+   }
+});
+</script>
 @endsection

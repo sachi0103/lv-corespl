@@ -245,13 +245,13 @@
 
                             <th><?php echo e($account->email); ?></th>
 
-                            <th><?php echo e($account->purchase_date); ?></th>
+                            <th><?php echo e(date('Y-m-d',strtotime($account->created_at))); ?></th>
 
                             <th><?php echo e($account->package_name); ?></th>
 
                             <th><?php echo e($account->remaining_minutes); ?></th>
 
-                            <th> <?php echo e(( in_array($account->package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime($account->purchase_date) ) ) : ''); ?></th>
+                            <th> <?php echo e(( $account->expire_date ) ? date("Y-m-d",strtotime($account->expire_date) ) : ''); ?></th>
 
                             <th> 
                                 
@@ -265,6 +265,7 @@
                         </tr>
 
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        
 
                           <tr><th colspan="8" align="center">No data found </th></tr>
                       

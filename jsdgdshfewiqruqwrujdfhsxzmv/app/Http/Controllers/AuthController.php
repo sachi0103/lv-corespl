@@ -38,7 +38,7 @@ class AuthController extends Controller
         if (!empty($request->all())) {
             Mail::to('support@corespl.com')->send(new ContactMail($request->all()));//support@corespl.com
             
-            return redirect()->route('welcome.php',md5($request->id))->with('success', 'Thank you for your request. My support will contact you soon');
+            return redirect()->route('welcome.php',md5($request->id))->with('success', 'Thank you for submitting your application. Our technical advisor will contact you within the next 24 to 48 hours.');
         } else {
             return redirect()->route('login');
         }
@@ -72,6 +72,8 @@ class AuthController extends Controller
                 $companies->no_of_phone = $request->no_of_phone;
                 $companies->no_phone_at_same_time = $request->no_phone_at_same_time;
                 $companies->new_phone = $request->new_phone;
+                $companies->new_area_code = $request->new_area_code;
+                $companies->new_phone_last = $request->new_phone_last;
                 $companies->exsisting_phone = $request->exsisting_phone;
                 $companies->save();
 
@@ -93,6 +95,8 @@ class AuthController extends Controller
                 $companies->no_of_phone = $request->no_of_phone;
                 $companies->no_phone_at_same_time = $request->no_phone_at_same_time;
                 $companies->new_phone = $request->new_phone;
+                $companies->new_area_code = $request->new_area_code;
+                $companies->new_phone_last = $request->new_phone_last;
                 $companies->exsisting_phone = $request->exsisting_phone;
                 $companies->save();
             }
