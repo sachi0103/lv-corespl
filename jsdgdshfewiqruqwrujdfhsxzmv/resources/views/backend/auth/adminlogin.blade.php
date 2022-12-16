@@ -1,7 +1,7 @@
 @extends('backend.layouts.authentication.master')
 
 @section('title', 'Login | High Streeting')
-
+<script src='https://www.google.com/recaptcha/api.js'></script>
 @section('content')
 
 <div class="container-fluid">
@@ -27,6 +27,11 @@
                         @if (session('success'))
                            <div class="alert alert-success">
                               {{ session('success') }}
+                           </div>
+                        @endif
+                        @if (session('error'))
+                           <div class="alert alert-error">
+                              {{ session('error') }}
                            </div>
                         @endif
                      </div>
@@ -184,7 +189,11 @@
                                  <input type="text" class="form-control" id="exsisting_phone" value="" name="exsisting_phone" require>
                               </div>
                         </div>
-
+                        @if(config('services.recaptcha.key'))
+                           <div class="g-recaptcha"
+                              data-sitekey="{{config('services.recaptcha.key')}}">
+                           </div>
+                        @endif
                         <div class="form-group form-row">
                               <div class="col-sm-12">
                                  <div class="pull-right" style="text-align: end;">
@@ -205,7 +214,6 @@
 @endsection
 
 @push('scripts')
-
 <script>
 
     (function() {'use strict';

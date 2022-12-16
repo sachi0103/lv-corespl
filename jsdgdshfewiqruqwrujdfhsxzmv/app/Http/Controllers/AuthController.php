@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Auth;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Backend\AccountController;
 
 use Illuminate\Support\Facades\Mail;
@@ -34,11 +35,19 @@ class AuthController extends Controller
     }
 
     public function contact_us(Request $request) {
-
+        
         if (!empty($request->all())) {
-            Mail::to('support@corespl.com')->send(new ContactMail($request->all()));//support@corespl.com
-            
-            return redirect()->route('welcome.php',md5($request->id))->with('success', 'Thank you for submitting your application. Our technical advisor will contact you within the next 24 to 48 hours.');
+            $validator = Validator::make($request->all(), [
+                'g-recaptcha-response' => 'required|recaptcha'
+            ]);
+    
+            if ($validator->fails()) {
+                return redirect()->route('welcome.php',md5($request->id))->with('error',$validator->errors()->first());
+            } else {
+                Mail::to('support@corespl.com')->send(new ContactMail($request->all()));//support@corespl.com
+                
+                return redirect()->route('welcome.php',md5($request->id))->with('success', 'Thank you for submitting your application. Our technical advisor will contact you within the next 24 to 48 hours.');
+            }
         } else {
             return redirect()->route('login');
         }
