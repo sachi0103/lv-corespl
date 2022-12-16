@@ -70,7 +70,7 @@ class AuthController extends Controller
                 $companies->office_phone = $request->office_phone;
                 $companies->own_phone = $request->own_phone;
                 $companies->no_of_phone = $request->no_of_phone;
-                $companies->no_phone_at_same_time = $request->no_phone_at_same_time;
+                $companies->emp_same_time = $request->emp_same_time;
                 $companies->new_phone = $request->new_phone;
                 $companies->new_area_code = $request->new_area_code;
                 $companies->new_phone_last = $request->new_phone_last;
@@ -93,7 +93,7 @@ class AuthController extends Controller
                 $companies->office_phone = $request->office_phone;
                 $companies->own_phone = $request->own_phone;
                 $companies->no_of_phone = $request->no_of_phone;
-                $companies->no_phone_at_same_time = $request->no_phone_at_same_time;
+                $companies->emp_same_time = $request->emp_same_time;
                 $companies->new_phone = $request->new_phone;
                 $companies->new_area_code = $request->new_area_code;
                 $companies->new_phone_last = $request->new_phone_last;

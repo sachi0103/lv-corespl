@@ -149,9 +149,9 @@
 
                               
                         <div class="form-group form-row">
-                              <label for="no_phone_at_same_time" class="col-sm-5 col-form-label">How many employees are on the phone at the same time:</label>
+                              <label for="emp_same_time" class="col-sm-5 col-form-label">How many employees are on the phone at the same time:</label>
                               <div class="col-sm-7">
-                                 <input type="text" class="form-control" id="no_phone_at_same_time" value="" name="no_phone_at_same_time" require>
+                                 <input type="text" class="form-control" id="emp_same_time" value="" name="emp_same_time" require>
                               </div>
                         </div>
                               
@@ -168,12 +168,13 @@
                         <div class="form-group form-row new_phone">
                               <label for="new_phone_last" class="col-sm-5 col-form-label">Enter your desired area code and last 4 digits<a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" title="Our technicians will try to find the number of your choice but we cannot guarantee aquire">?</a></label>
                               <div class="col-sm-2">
-                                 <input type="text" class="form-control" id="new_area_code" value="" name="new_area_code" require placeholder="Area Code">
+                                 <input type="text" class="form-control" maxlength="3" id="new_area_code" value="" name="new_area_code" require placeholder="Area Code">
                               </div>
                               <div class="col-sm-2">
+                              <span style="background:gray;width:100%;height:71%;" class="form-control">&nbsp;</span>
                               </div>
                               <div class="col-sm-3">
-                                 <input type="text" class="form-control" id="new_phone_last" value="" name="new_phone_last" require placeholder="Last 4 digits">
+                                 <input type="text" class="form-control" maxlength="4" id="new_phone_last" value="" name="new_phone_last" require placeholder="Last 4 digits">
                               </div>
                         </div>
 

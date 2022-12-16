@@ -54,7 +54,7 @@ Route::get('/', function () {
 });
 
 Route::get('/account.php',function(Request $request) {
-    return redirect()->route('welcome.php', md5($request->id) );
+    return redirect()->route('welcome.php', md5($request->action) );
 });
 Route::get('/welcome/{id}', [App\Http\Controllers\Backend\DashboardController::class, 'welcome'])->name('welcome.php');
 Route::get('/contactus', [App\Http\Controllers\AuthController::class, 'contact_us'])->name('contactus');
