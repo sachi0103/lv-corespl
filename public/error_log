@@ -1,0 +1,4 @@
+[03-Aug-2022 21:36:53 UTC] PHP Warning:  require(/home/corespl/login.corespl.com/public/../vendor/autoload.php): failed to open stream: No such file or directory in /home/corespl/login.corespl.com/public/index.php on line 34
+[03-Aug-2022 21:36:53 UTC] PHP Fatal error:  require(): Failed opening required '/home/corespl/login.corespl.com/public/../vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/corespl/login.corespl.com/public/index.php on line 34
+[03-Aug-2022 21:36:57 UTC] PHP Warning:  require(/home/corespl/login.corespl.com/public/../vendor/autoload.php): failed to open stream: No such file or directory in /home/corespl/login.corespl.com/public/index.php on line 34
+[03-Aug-2022 21:36:57 UTC] PHP Fatal error:  require(): Failed opening required '/home/corespl/login.corespl.com/public/../vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/corespl/login.corespl.com/public/index.php on line 34
