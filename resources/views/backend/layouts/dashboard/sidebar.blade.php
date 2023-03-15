@@ -50,7 +50,7 @@
 
             <li class="sidebar-list">
 
-               <a class="sidebar-link sidebar-title {{ Route::currentRouteName()=='admin.package.index' ? 'active' : '' }}"  href="{{route('admin.accounts.index')}}">
+               <a class="sidebar-link sidebar-title {{ Route::currentRouteName()=='admin.packages.index' ? 'active' : '' }}"  href="{{route('admin.packages.index')}}">
 
                   <i data-feather="flag"></i><span>Manage Package</span>
 
@@ -58,7 +58,7 @@
 
             </li>
 
-            <li class="sidebar-list">
+            <!-- <li class="sidebar-list">
 
                 <a class="sidebar-link sidebar-title {{ Route::currentRouteName()=='admin.accounts.index' ? 'active' : '' }}"  href="{{route('admin.accounts.index')}}">
 
@@ -66,7 +66,7 @@
 
                 </a>
 
-             </li>
+             </li> -->
 
 
 

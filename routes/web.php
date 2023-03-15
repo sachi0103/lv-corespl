@@ -12,6 +12,8 @@ use App\Http\Controllers\Backend\ReportController;
 
 use App\Http\Controllers\Backend\UsersController;
 
+use App\Http\Controllers\Backend\PackagesController;
+
 use App\Models\Country;
 
 use Illuminate\Support\Facades\Auth;
@@ -101,6 +103,13 @@ Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(functio
     Route::get('/accounts/renew_all_plan/{custpackageid}', [AccountController::class, 'all_user_plan_renew'])->name('accounts.renew_all_plan');
 
     Route::resource('/users', UsersController::class);
+
+    Route::resource('/packages', PackagesController::class);
+
+    Route::get('/packages/transaction/success', [PackagesController::class, 'success'])->name('packages.transaction.success');
+
+    Route::get('/packages/transaction/cancel/{paymentId}', [PackagesController::class, 'cancel'])->name('packages.transaction.cancel');
+    
 });
 
 

@@ -70,6 +70,84 @@ class Subscription
 
     }
 
+    /**
+    * Purchance Package only 
+    */
+    function purchasePackage($package, $postData) {
+        DB::beginTransaction();
+        try {
+
+            $clientId = auth()->user()->id;
+            $total = 0;
+            $paymentId = [];
+
+            foreach ($postData['package_id'] as $key => $packageId) {
+                # code...
+                $selPackage = array_values(array_filter($package, function($var) use($packageId) {
+                    return ($var['package_id'] == $packageId);
+                }));
+
+                if ( isset($postData['package_qty'][$key]) && $postData['package_qty'][$key] > 0 ) {
+
+                    $payment = Payment::create([
+
+                        'user_id' => $clientId,
+        
+                        'package_id' => $selPackage[0]['package_id'],
+        
+                        'country_id' => $postData['country_id'],
+        
+                        'number_of_packages' => $postData['package_qty'][$key],
+        
+                        'number_of_users' => 0,
+        
+                        'charge_per_user' => $selPackage[0]['price'],
+        
+                        'charge_per_package' => $selPackage[0]['price'],
+        
+                        'subtotal' => ( $selPackage[0]['price'] * $postData['package_qty'][$key] ),
+        
+                        'total' => ( $selPackage[0]['price'] * $postData['package_qty'][$key] ),
+        
+                        'taxes' => 0,
+        
+                        'delivery' => 0,
+
+                        'use_the_payment_method_on_file' => 0 ,
+                    ]);
+
+                    $total = $total  +  ( $selPackage[0]['price'] * $postData['package_qty'][$key] );
+
+                    array_push($paymentId, $payment->id);
+                }
+            }
+
+            $packageList = Package::whereIn('package_id', $postData['package_id'])->get()->toArray();
+            $package_name = implode(',', array_column($packageList,'package_name'));
+
+            DB::commit();
+
+            $paymentId = implode(",",$paymentId);
+
+            return auth()->user()->checkoutCharge($total*100, $package_name,
+
+            1,
+
+             ['success_url' => route('admin.packages.transaction.success'),
+
+             'cancel_url' => route('admin.packages.transaction.cancel', [$paymentId])
+
+            ]);
+
+        } catch(Throwable $exception) {
+
+            DB::rollBack();
+
+            return $exception->getMessage();
+
+        }
+    }   
+
     //renew plan 
     function renewSubscription($custPackageDetails,$packageDetails)
     {

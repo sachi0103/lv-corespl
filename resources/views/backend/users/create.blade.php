@@ -5,7 +5,7 @@
 @section('css')
 
 <link rel="stylesheet" type="text/css" href="{{asset('backend/css/vendors/animate.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('backend/css/vendors/datatables.css')}}">
+<meta name="_token" content="{{csrf_token()}}" />
 
 @endsection
 
@@ -52,30 +52,33 @@
         <div class="row">
 
             <div class="col-sm-12">
+                
+                <form action="{{route('admin.users.store')}}" method="post" id="myform">
+                @csrf
+                    <div class="card">
 
-                <div class="card">
+                        <div class="card-header">
 
-                    <div class="card-header">
-
-                        <div class="row">
-                            
-                            <div class="col-sm-8"><h5>Create New User</h5></div>
-                            <div class="col-sm-4">
-                                <button type='button' id="AddBtn" class="btn-info btn-md" onclick="addRow();"><i class="fa fa-plus"></i></button>
+                            <div class="row">
+                                
+                                <div class="col-sm-8"><h5>Create New User</h5></div>
+                                <div class="col-sm-4">
+                                    <button type='button' id="AddBtn" class="btn-info btn-md" onclick="addRow();"><i class="fa fa-plus"></i></button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="card-body">
-                        <form action="{{route('admin.users.store')}}" method="post" id="myform">
-                            @csrf
+                        <div class="card-body">
                             <div class="mt-2 mb-4  append-list user-section">
-
                             </div>
-                        </form>
-                    </div>
+                        </div>
 
-                </div>
+                        <div class="card-footer">
+                            <button class="btn btn-secondary">Next</button>
+                        </div>
+                    </div>
+                
+                </form>
 
             </div>
 
@@ -91,12 +94,20 @@ var PackageList = <?php echo  (count($packages) > 0) ? json_encode($packages) : 
 var addId = 0;
 function addRow() {
     let selectOption = '<option value="">select Package</option>';
+    let mainIndex = parseInt(0);
     $.each(PackageList,function(index,value){
-        selectOption += '<option value="'+value['package_id']+'" data-index="'+index+'">'+value['package_name']+'</option>';
+        let pCnt = parseInt(value['number_of_packages']) - parseInt(value['usedCnt']);
+        if(pCnt > 0)
+        {
+            for (let index = 1; index <= pCnt; index++) {
+                selectOption += '<option value="'+value['package_id']+'" data-index="'+mainIndex+'">'+value['package_name']+'</option>';
+                mainIndex++;
+            }
+        }
     });
     selectOption+= '<option value="-1">User you own SIP Account</option>';
 
-    let htmlDiv = "<div class='form-group row' id='remove"+addId+"'><div class='col-md-3'><label class='col-form-label'>Name</label><input class='form-control' id='' type='text' name='user_name[]' placeholder='Enter name' required></div><div class='col-md-3'><label class='col-form-label'>Email</label><input class='form-control' id='user_email"+addId+"' type='email' required name='user_email[]' placeholder='Enter email' onblur='CheckUniqueEmail(this.value,"+addId+");'></div><div class='col-md-4'><label class='col-form-label'>Select Package</label><input type='hidden' name='user_package[]' id='user"+addId+"' /><select class='form-control packageSelect' name='user_share[]' id='exampleFormControlSelect"+addId+"' required data-main='"+addId+"' onchange='changeOtion(this);' onfocus='oldValueDeSelect(this);'>"+selectOption+"</select></div><div class='col-md-2'><button type='button' style='margin-top: 25%;' class='btn-danger btn-md' onclick='removeRow("+addId+");'><i class='fa fa-close'></i></button></div></div>";
+    let htmlDiv = "<div class='form-group row remove"+addId+"'><div class='col-md-3'><label class='col-form-label'>Name</label><input class='form-control' id='' type='text' name='user_name[]' placeholder='Enter name' required></div><div class='col-md-3'><label class='col-form-label'>Email</label><input class='form-control' id='user_email"+addId+"' type='email' required name='user_email[]' placeholder='Enter email' onblur='CheckUniqueEmail(this.value,"+addId+");'></div><div class='col-md-4'><label class='col-form-label'>Select Package</label><input type='hidden' name='user_package[]' id='user"+addId+"' /><select class='form-control packageSelect' name='user_share[]' id='exampleFormControlSelect"+addId+"' required data-main='"+addId+"' onchange='changeOtion(this);' onfocus='oldValueDeSelect(this);'>"+selectOption+"</select></div><div class='col-md-2'><button type='button' style='margin-top: 25%;' class='btn-danger btn-md' onclick='removeRow("+addId+");'><i class='fa fa-close'></i></button></div></div><div class='form-group row remove"+addId+"' id='spiDiv"+addId+"' style='display:none;'><div class='col-md-2'><label class='col-form-label'>User Id</label><input class='form-control' id='user_id"+addId+"' type='text' name='user_id[]' placeholder='Enter User Id'></div><div class='col-md-2'><label class='col-form-label'>Password</label><input class='form-control' id='password"+addId+"' type='text' name='password[]' placeholder='Enter Password'></div><div class='col-md-2'><label class='col-form-label'>Host</label><input class='form-control' id=''host"+addId+" type='text' name='Host[]' placeholder='Enter Host'></div><div class='col-md-2'><label class='col-form-label'>Port</label><input class='form-control' id='port"+addId+"' type='text' name='Port[]' placeholder='Enter Port'></div><div class='col-md-2'><label class='col-form-label'>Protocol</label><div><input type='radio' id='TCP"+addId+"' name='protocol[]' value='TCP' /><label for='TCP' style='margin-right: 10px;'>TCP</label><input type='radio' id='UDP"+addId+"' name='protocol[]' value='phone' /><label for='UDP' style='margin-right: 10px;'>UDP</label><input type='radio' id='TLS"+addId+"' name='protocol[]' value='TLS' /><label for='TLS' style='margin-right: 10px;'>TLS</label></div></div></div></div>";
 
     addId++;
     $('.append-list').append(htmlDiv);
@@ -105,7 +116,7 @@ function addRow() {
 
 function removeRow(ids)
 {
-    $('#remove'+ids).remove();
+    $('.remove'+ids).remove();
 }
 
 function oldValueDeSelect(obj)
@@ -166,14 +177,13 @@ function changeOtion(obj) {
         if(jQuery.inArray( parseInt(selValue), [7,8] ) !== -1) {
             UnlimitedShareCount+= 1;
         }
-
         
         if(!isSelected)
             $('.packageSelect option[data-index="'+selOptionIndex+'"]').attr('disabled',false);
         
     });
     
-    if($('#'+selOptionId+' option:selected').val() === -1) {
+    if(parseInt($('#'+selOptionId+' option:selected').val()) === -1) {
         $('#spiDiv'+index).show();
     } else {
         $('#spiDiv'+index).hide();
