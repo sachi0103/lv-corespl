@@ -11,6 +11,7 @@ use App\Models\Payment;
 use App\Models\Package;
 use App\Models\PackageUser;
 use App\Models\Country;
+use App\Models\SIPUser;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use DB;
@@ -49,6 +50,7 @@ class UsersController extends Controller
     
     public function store(Request $request)
     {
+        dd($request->all());
         $AllPostData = $request->all();
         if(isset($AllPostData['user_email']) && !empty(isset($AllPostData['user_email']))) {
             
@@ -60,11 +62,6 @@ class UsersController extends Controller
             foreach ($AllPostData['user_email'] as $key => $value) {
 
                 $package_id = $AllPostData['user_package'][$key];
-                $selPackage = array_values(array_filter($package,function($var) use($package_id) {
-                    return ($var['package_id'] == $package_id);
-                }));
-
-
                 // user create 
                 $verification_code = mt_rand(1000, 9999);
 
@@ -80,42 +77,60 @@ class UsersController extends Controller
                     'verification_code' => $verification_code,
                 ]);
 
-                // //send email for customers password
-                // $this->sendMail(['name' => $AllPostData['user_name'][$key],'subject' => 'Email Verification','email' => $value,'password'=>$password],2);
+                //send email for customers password
+                $this->sendMail(['name' => $AllPostData['user_name'][$key],'subject' => 'Email Verification','email' => $value,'password'=>$password],2);
 
-                // //send email for customers verification
-                // $this->sendMail(['name' => $AllPostData['user_name'][$key],'subject' => 'Email Verification','email' => $value,'code' => $verification_code],1);
+                //send email for customers verification
+                $this->sendMail(['name' => $AllPostData['user_name'][$key],'subject' => 'Email Verification','email' => $value,'code' => $verification_code],1);
 
-                //customer package added
-                $customerPackage = CustomerPackage::create([
-                    'customer_id' => $user->id,
-                    'package_id' => $package_id,
-                    'amount' => $selPackage[0]['price'],
-                    'expire_date' => ( in_array($package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime(now()) ) ) : null,
-                    'has_paid' => 1,
-                    'allowed_minutes' => $selPackage[0]['call_minutes'],
-                    'remaining_minutes' => $selPackage[0]['call_minutes'],
-                    'country_id' => (isset($countryIds[$selPackage[0]['call_country']])) ? $countryIds[$selPackage[0]['call_country']] : 0,
-                    'number_of_selected_package' => 1,
-                ]);
+                if($package_id !== -1) {
+                    
+                    $selPackage = array_values(array_filter($package,function($var) use($package_id) {
+                        return ($var['package_id'] == $package_id);
+                    }));
 
-                $PackageUser = PackageUser::create([
-                    'package_user_id' => $user->id,
-                    'package_id' => $customerPackage->id,
-                    'name' => $AllPostData['user_name'][$key],
-                    'email' => $value,
-                ]);
-
-                $paymentDt = Payment::where('package_id',$package_id)->where('user_id',auth()->user()->id)->first();
-
-                if ($paymentDt !== null) {
-                    PaymentsUsers::create([
-                        'user_id' => $user->id,
-                        'payment_id' => $paymentDt->id,
+                    //customer package added
+                    $customerPackage = CustomerPackage::create([
+                        'customer_id' => $user->id,
                         'package_id' => $package_id,
+                        'amount' => $selPackage[0]['price'],
+                        'expire_date' => ( in_array($package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime(now()) ) ) : null,
+                        'has_paid' => 1,
+                        'allowed_minutes' => $selPackage[0]['call_minutes'],
+                        'remaining_minutes' => $selPackage[0]['call_minutes'],
+                        'country_id' => (isset($countryIds[$selPackage[0]['call_country']])) ? $countryIds[$selPackage[0]['call_country']] : 0,
+                        'number_of_selected_package' => 1,
                     ]);
-                }
 
+                    $PackageUser = PackageUser::create([
+                        'package_user_id' => $user->id,
+                        'package_id' => $customerPackage->id,
+                        'name' => $AllPostData['user_name'][$key],
+                        'email' => $value,
+                    ]);
+
+                    $paymentDt = Payment::where('package_id',$package_id)->where('user_id',auth()->user()->id)->first();
+
+                    if ($paymentDt !== null) {
+                        PaymentsUsers::create([
+                            'user_id' => $user->id,
+                            'payment_id' => $paymentDt->id,
+                            'package_id' => $package_id,
+                        ]);
+                    }
+                } else {
+
+                    //create SIP users
+                    $sipUser = SIPUser::create([
+                        'username' => $AllPostData['username'][$key],
+                        'password' => $AllPostData['password'][$key],
+                        'host_name' => $AllPostData['Host'][$key],
+                        'Proto' => $AllPostData['protoco'.$key],
+                        'port' => $AllPostData['Port'][$key],
+                        'user_id' => $user->id,
+                    ]);
+                    
+                }
             }
 
             //login user convert to admin
