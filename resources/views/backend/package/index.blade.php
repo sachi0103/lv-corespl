@@ -84,6 +84,8 @@
 
                                     <th scope="col">No Of Package</th>
 
+                                    <th scope="col">No Of Used Package</th>
+
                                     <th scope="col">Price/<small>per</small></th>
 
                                     <th scope="col">Total</th>
@@ -102,6 +104,8 @@
                                         <td>{{ date('Y-m-d',strtotime($package->created_at)) }}</td>
 
                                         <td>{{$package->number_of_packages}}</td>
+
+                                        <td>{{$package->use_packaged}}</td>
 
                                         <td>{{$package->charge_per_package}}</td>
 
