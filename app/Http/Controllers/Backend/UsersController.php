@@ -50,7 +50,6 @@ class UsersController extends Controller
     
     public function store(Request $request)
     {
-        dd($request->all());
         $AllPostData = $request->all();
         if(isset($AllPostData['user_email']) && !empty(isset($AllPostData['user_email']))) {
             
@@ -83,53 +82,57 @@ class UsersController extends Controller
                 //send email for customers verification
                 $this->sendMail(['name' => $AllPostData['user_name'][$key],'subject' => 'Email Verification','email' => $value,'code' => $verification_code],1);
 
-                if($package_id !== -1) {
-                    
-                    $selPackage = array_values(array_filter($package,function($var) use($package_id) {
-                        return ($var['package_id'] == $package_id);
-                    }));
+                if(!empty($package_id)) {
 
-                    //customer package added
-                    $customerPackage = CustomerPackage::create([
-                        'customer_id' => $user->id,
-                        'package_id' => $package_id,
-                        'amount' => $selPackage[0]['price'],
-                        'expire_date' => ( in_array($package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime(now()) ) ) : null,
-                        'has_paid' => 1,
-                        'allowed_minutes' => $selPackage[0]['call_minutes'],
-                        'remaining_minutes' => $selPackage[0]['call_minutes'],
-                        'country_id' => (isset($countryIds[$selPackage[0]['call_country']])) ? $countryIds[$selPackage[0]['call_country']] : 0,
-                        'number_of_selected_package' => 1,
-                    ]);
+                    if($package_id !== -1) {
+                        
+                        $selPackage = array_values(array_filter($package,function($var) use($package_id) {
+                            return ($var['package_id'] == $package_id);
+                        }));
 
-                    $PackageUser = PackageUser::create([
-                        'package_user_id' => $user->id,
-                        'package_id' => $customerPackage->id,
-                        'name' => $AllPostData['user_name'][$key],
-                        'email' => $value,
-                    ]);
-
-                    $paymentDt = Payment::where('package_id',$package_id)->where('user_id',auth()->user()->id)->first();
-
-                    if ($paymentDt !== null) {
-                        PaymentsUsers::create([
-                            'user_id' => $user->id,
-                            'payment_id' => $paymentDt->id,
+                        //customer package added
+                        $customerPackage = CustomerPackage::create([
+                            'customer_id' => $user->id,
                             'package_id' => $package_id,
+                            'amount' => $selPackage[0]['price'],
+                            'expire_date' => ( in_array($package_id,[7,8]) ) ? date("Y-m-d",strtotime("+1 month", strtotime(now()) ) ) : null,
+                            'has_paid' => 1,
+                            'allowed_minutes' => $selPackage[0]['call_minutes'],
+                            'remaining_minutes' => $selPackage[0]['call_minutes'],
+                            'country_id' => (isset($countryIds[$selPackage[0]['call_country']])) ? $countryIds[$selPackage[0]['call_country']] : 0,
+                            'number_of_selected_package' => 1,
                         ]);
-                    }
-                } else {
 
-                    //create SIP users
-                    $sipUser = SIPUser::create([
-                        'username' => $AllPostData['username'][$key],
-                        'password' => $AllPostData['password'][$key],
-                        'host_name' => $AllPostData['Host'][$key],
-                        'Proto' => $AllPostData['protoco'.$key],
-                        'port' => $AllPostData['Port'][$key],
-                        'user_id' => $user->id,
-                    ]);
-                    
+                        $PackageUser = PackageUser::create([
+                            'package_user_id' => $user->id,
+                            'package_id' => $customerPackage->id,
+                            'name' => $AllPostData['user_name'][$key],
+                            'email' => $value,
+                        ]);
+
+                        $paymentDt = Payment::where('package_id',$package_id)->where('user_id',auth()->user()->id)->first();
+
+                        if ($paymentDt !== null) {
+                            PaymentsUsers::create([
+                                'user_id' => $user->id,
+                                'payment_id' => $paymentDt->id,
+                                'package_id' => $package_id,
+                            ]);
+                        }
+                    } else {
+
+                        //create SIP users
+                        $sipUser = SIPUser::create([
+                            'username' => $AllPostData['username'][$key],
+                            'password' => $AllPostData['password'][$key],
+                            'host_name' => $AllPostData['Host'][$key],
+                            'Proto' => $AllPostData['protoco'.$key],
+                            'port' => $AllPostData['Port'][$key],
+                            'user_id' => $user->id,
+                        ]);
+                        
+                    }
+
                 }
             }
 
@@ -172,5 +175,37 @@ class UsersController extends Controller
             $pass[] = $alphabet[$n];
         }
         return implode($pass); //turn the array into a string
+    }
+
+    public function destory($id) {
+        
+        User::whereRaw('md5(id) = "'.$id.'"')->delete();
+
+        return redirect()->route('admin.users.index')->with('success', 'user removed successfully');
+
+    }
+
+    public function edit($id) {
+        
+        $user = User::whereRaw('md5(id) = "'.$id.'"')->first();
+
+        return view('backend.users.update',compact('user'));
+
+    }
+
+    public function update(Request $request) {
+        $user = User::whereRaw('md5(id) = "'.$request->id.'"')->first();
+
+        if(!empty($user)) {
+
+            $user->name = $request->name;
+            $user->phone = $request->phone;
+            $user->user_address = $request->user_address;
+            $user->save();
+
+            return redirect()->route('admin.users.index')->with('success', 'user details updated successfully');
+        } else {
+            return redirect()->route('admin.users.index')->with('error', 'user details not found');
+        }
     }
 }

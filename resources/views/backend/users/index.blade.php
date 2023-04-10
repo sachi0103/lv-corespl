@@ -105,7 +105,12 @@
 
                                         <td>{{$account->user_address}}</td>
 
-                                        <td></td>
+                                        <td>
+                                            <a href="{{route('admin.users.edit',md5($account->id))}}" class="text-info"><i class="fa fa-edit"></i></a>
+                                            <?php if ($account->package_id == 0) { ?>
+                                                <a href="{{route('admin.users.destory',md5($account->id))}}" class="text-danger"><i class="fa fa-trash"></i></a>
+                                            <?php } ?>
+                                        </td>
                                     </tr>
                                     @empty
                                     <tr align="center"><td colspan="6">No data found </td></tr>
