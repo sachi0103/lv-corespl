@@ -21,8 +21,12 @@ class Payment extends Model
 
 
     protected $guarded = [];
+    protected $appends = ['no_of_users'];
 
+    public function getNoOfUsersAttribute(){
 
+        return PaymentsUsers::where('payment_id',$this->id)->count();
+    }
 
     public function country(){
 
@@ -41,8 +45,8 @@ class Payment extends Model
     public function payment_users(){
 
         return $this->hasMany(PaymentsUsers::class,'payment_id','id');
- 
-     }
+
+    }
 
 }
 
