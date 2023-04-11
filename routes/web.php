@@ -107,6 +107,8 @@ Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(functio
     Route::get('/users/edit/{id}', [UsersController::class, 'edit'])->name('users.edit');
     Route::post('/users/update', [UsersController::class, 'update'])->name('users.update');
     Route::get('/users/removed/{id}', [UsersController::class, 'destory'])->name('users.destory');
+    
+    Route::post('/users/reassignPackage', [UsersController::class, 'reassignPackage'])->name('users.reassignPackage');
 
     Route::resource('/packages', PackagesController::class);
 

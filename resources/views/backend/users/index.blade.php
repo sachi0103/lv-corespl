@@ -6,6 +6,7 @@
 
 <link rel="stylesheet" type="text/css" href="{{asset('backend/css/vendors/animate.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('backend/css/vendors/datatables.css')}}">
+<meta name="_token" content="{{csrf_token()}}" />
 
 @endsection
 
@@ -109,6 +110,8 @@
                                             <a href="{{route('admin.users.edit',md5($account->id))}}" class="text-info"><i class="fa fa-edit"></i></a>
                                             <?php if ($account->package_id == 0) { ?>
                                                 <a href="{{route('admin.users.destory',md5($account->id))}}" class="text-danger"><i class="fa fa-trash"></i></a>
+                                            <?php } else { ?>
+                                                <a href="javascript:void(0);" onclick="reassignModel({{$account->id}});" class="text-info"><i class="fa fa-sign-in"></i></a>
                                             <?php } ?>
                                         </td>
                                     </tr>
@@ -127,6 +130,43 @@
             </div>
 
         </div>
+
+<!-- Modal -->
+<div class="modal fade" id="reassign_model" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">User reassign package</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <form action="{{route('admin.users.reassignPackage')}}" method="post" id="myform">
+        @csrf  
+            <div class="modal-body">
+                <input type="hidden" name="user_id" id="user_id" />
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <label class='col-form-label'>Select New User</label>
+                        <select id="new_user_id" name="new_user_id" class="form-control">
+                            <option>Select User</option>
+                            @foreach ($users as $key => $account)
+                                @if ($account->package_id == 0)
+                                    <option value="{{$account->id}}">{{$account->name}}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('script')
@@ -137,6 +177,11 @@
   $(function () {
     var table = $('#account-table').DataTable();
   });
+
+  function reassignModel(user_id) {
+    $('#user_id').val(user_id);
+    $('#reassign_model').modal('show');
+  }
 </script>
 
 @endsection

@@ -208,4 +208,58 @@ class UsersController extends Controller
             return redirect()->route('admin.users.index')->with('error', 'user details not found');
         }
     }
+
+    /**
+     * assign package one user to another users 
+    */
+    public function reassignPackage(Request $request) {
+        //get user details 
+        $user = User::where('id',$request->user_id)->first();
+
+        if(!empty($user)) {
+
+            //get package details 
+            $package = Package::where('package_id',$user->package_id)->first();
+
+            if (!empty($package)) {
+
+                $user->package_id = 0;
+                $user->save();
+
+                $newUser = User::where('id',$request->new_user_id)->first();
+                if (!empty($newUser)) {
+                    $newUser->package_id = $package->package_id;
+                    $newUser->save();
+                }
+
+                //customer package 
+                $custPackage = CustomerPackage::where('customer_id',$user->id)->where('package_id',$package->package_id)->first();
+
+                if (!empty($custPackage) && !empty($newUser)) {
+                    CustomerPackage::where('id',$custPackage->id)->update(['customer_id'=>$newUser->id]);
+                }
+
+                $packUser = PackageUser::where('package_user_id',$user->id)->where('package_id',$custPackage->id)->first();
+                if (!empty($packUser) && !empty($newUser)) {
+                    PackageUser::where('id',$packUser->id)->update([
+                        'package_user_id' => $newUser->id,
+                        'package_id' => $custPackage->id,
+                        'name' => $newUser->name,
+                        'email' => $newUser->email,
+                    ]);
+                }
+
+                $paymentUser = PaymentsUsers::where('user_id',$user->id)->where('package_id',$package->package_id)->first();
+                if (!empty($paymentUser) && !empty($newUser)) {
+                    PaymentsUsers::where('id',$paymentUser->id)->update(['user_id'=>$newUser->id]);
+                }
+                
+                return redirect()->route('admin.users.index')->with('success', 'user reassign package successfully');
+            } else {
+                return redirect()->route('admin.users.index')->with('error', 'user details not found');
+            }
+        } else {
+            return redirect()->route('admin.users.index')->with('error', 'user details not found');
+        }
+    }
 }
