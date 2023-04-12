@@ -235,23 +235,24 @@ class UsersController extends Controller
                 //customer package 
                 $custPackage = CustomerPackage::where('customer_id',$user->id)->where('package_id',$package->package_id)->first();
 
-                if (!empty($custPackage) && !empty($newUser)) {
-                    CustomerPackage::where('id',$custPackage->id)->update(['customer_id'=>$newUser->id]);
-                }
+                if (!empty($custPackage)) {
+                    CustomerPackage::where('id',$custPackage->id)->update(['customer_id'=>$request->new_user_id]);
+                    
 
-                $packUser = PackageUser::where('package_user_id',$user->id)->where('package_id',$custPackage->id)->first();
-                if (!empty($packUser) && !empty($newUser)) {
-                    PackageUser::where('id',$packUser->id)->update([
-                        'package_user_id' => $newUser->id,
-                        'package_id' => $custPackage->id,
-                        'name' => $newUser->name,
-                        'email' => $newUser->email,
-                    ]);
-                }
+                    $packUser = PackageUser::where('package_user_id',$request->user_id)->where('package_id',$custPackage->id)->first();
+                    if (!empty($packUser)) {
+                        PackageUser::where('id',$packUser->id)->update([
+                            'package_user_id' => $newUser->id,
+                            'package_id' => $custPackage->id,
+                            'name' => $newUser->name,
+                            'email' => $newUser->email,
+                        ]);
+                    }
 
-                $paymentUser = PaymentsUsers::where('user_id',$user->id)->where('package_id',$package->package_id)->first();
-                if (!empty($paymentUser) && !empty($newUser)) {
-                    PaymentsUsers::where('id',$paymentUser->id)->update(['user_id'=>$newUser->id]);
+                    $paymentUser = PaymentsUsers::where('user_id',$user->id)->where('package_id',$package->package_id)->first();
+                    if (!empty($paymentUser)) {
+                        PaymentsUsers::where('id',$paymentUser->id)->update(['user_id'=>$request->new_user_id]);
+                    }
                 }
                 
                 return redirect()->route('admin.users.index')->with('success', 'user reassign package successfully');

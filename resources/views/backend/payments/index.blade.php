@@ -125,8 +125,12 @@ $(function () {
         },
         columns: [
             {
-                dataField: 'number_of_users',
+                dataField: 'no_of_users',
                 caption: 'Number of User',
+            },
+            {
+                dataField: 'number_of_packages',
+                caption: 'Number of Packages',
             },
             {
                 dataField: 'subtotal',

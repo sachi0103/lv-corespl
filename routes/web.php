@@ -77,6 +77,8 @@ Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(functio
 
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
+    Route::post('/reports', [ReportController::class, 'index'])->name('reports.index');
+
     Route::get('/account/user/{packageId}', [AccountController::class, 'show'])->name('accounts.user');
 
 
