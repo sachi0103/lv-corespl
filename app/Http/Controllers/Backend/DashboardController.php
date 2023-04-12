@@ -42,7 +42,7 @@ class DashboardController extends Controller
 
         $userCounts =  User::where('id',auth()->user()->id)->orWhere('Parent',auth()->user()->id)->count();
 
-        $callLogsCount = CallLog::count();
+        $callLogsCount = CallLog::whereIn('user_id',$userIds)->count();
 
         $str = 'SELECT * FROM (
             SELECT customer_packages.id AS customer_packages_id,packages.package_name,customer_packages.package_id,customer_packages.customer_id,customer_packages.amount,customer_packages.expire_date,customer_packages.allowed_minutes,customer_packages.remaining_minutes,users.name,users.email,customer_packages.created_at
