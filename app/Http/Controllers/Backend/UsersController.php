@@ -128,6 +128,7 @@ class UsersController extends Controller
                             'Proto' => $AllPostData['protocol'.$key],
                             'port' => $AllPostData['Port'][$key],
                             'user_id' => $user->id,
+                            'country_code' => '+1',
                         ]);
                         
                     }
