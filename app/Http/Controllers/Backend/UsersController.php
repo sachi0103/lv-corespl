@@ -83,8 +83,7 @@ class UsersController extends Controller
                 $this->sendMail(['name' => $AllPostData['user_name'][$key],'subject' => 'Email Verification','email' => $value,'code' => $verification_code],1);
 
                 if(!empty($package_id)) {
-
-                    if($package_id !== -1) {
+                    if((int)$package_id !== -1)  {
                         
                         $selPackage = array_values(array_filter($package,function($var) use($package_id) {
                             return ($var['package_id'] == $package_id);
@@ -126,7 +125,7 @@ class UsersController extends Controller
                             'username' => $AllPostData['username'][$key],
                             'password' => $AllPostData['password'][$key],
                             'host_name' => $AllPostData['Host'][$key],
-                            'Proto' => $AllPostData['protoco'.$key],
+                            'Proto' => $AllPostData['protocol'.$key],
                             'port' => $AllPostData['Port'][$key],
                             'user_id' => $user->id,
                         ]);
