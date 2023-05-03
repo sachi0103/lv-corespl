@@ -109,7 +109,7 @@
                                         <td>
                                             <a href="{{route('admin.users.edit',md5($account->id))}}" class="text-info"><i class="fa fa-edit"></i></a>
                                             <?php if ($account->package_id == 0) { ?>
-                                                <a href="{{route('admin.users.destory',md5($account->id))}}" class="text-danger"><i class="fa fa-trash"></i></a>
+                                                <a href="javascript:void(0);" onclick="deleteCustomer('{{md5($account->id)}}');" class="text-danger"><i class="fa fa-trash"></i></a>
                                             <?php } else { ?>
                                                 <a href="javascript:void(0);" onclick="reassignModel({{$account->id}});" class="text-info"><i class="fa fa-sign-in"></i></a>
                                             <?php } ?>
@@ -182,6 +182,13 @@
     $('#user_id').val(user_id);
     $('#reassign_model').modal('show');
   }
+
+  function deleteCustomer(custId) {
+    let text = "Are you sure you want to remove customer";
+    if (confirm(text) == true) {
+        window.location.assign(window.location.origin+"/call-recall/users/removed/"+custId);
+    }
+ }
 </script>
 
 @endsection

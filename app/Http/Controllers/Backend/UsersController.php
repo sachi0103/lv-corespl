@@ -152,7 +152,7 @@ class UsersController extends Controller
 
                 $message->to($data['email'], $data['name'])->subject($data['subject']);
 
-                $message->from('vappcorespl@gmail.com', 'Email Verification');
+                $message->from('no_reply@corespl.com', 'Email Verification');
 
             });
         }else if($type == 2) { 
@@ -160,7 +160,7 @@ class UsersController extends Controller
 
                 $message->to($data['email'], $data['name'])->subject($data['subject']);
 
-                $message->from('vappcorespl@gmail.com', 'Email Verification');
+                $message->from('no_reply@corespl.com', 'Email Verification');
 
             });
         }

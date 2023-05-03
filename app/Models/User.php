@@ -63,6 +63,8 @@ class User extends Authenticatable
         'Parent',
         
         'package_id',
+
+        'verification_code',
     ];
 
 
