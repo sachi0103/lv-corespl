@@ -98,6 +98,24 @@
         div[style*="margin: 16px 0;"] {
             margin: 0 !important;
         }
+
+        .button {
+            display: inline-block;
+            background-color: #0e65b2;
+            border-radius: 10px;
+            border: 4px double #0e65b2;
+            color: #FFF;
+            text-align: center;
+            font-size: 28px;
+            padding: 20px;
+            width: 200px;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+            -o-transition: all 0.5s;
+            transition: all 0.5s;
+            cursor: pointer;
+            margin: 5px;
+        }
     </style>
 </head>
 
@@ -120,7 +138,7 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
-                            <h1 style="font-size: 48px; font-weight: 400; margin: 2;">Welcome {{$name}}!</h1> <img src=" https://img.icons8.com/clouds/100/000000/handshake.png" width="125" height="120" style="display: block; border: 0px;" />
+                            <h1 style="font-size: 48px; font-weight: 400; margin: 2;">Welcome {{$name}}!</h1> <img src=" {{asset('backend/images/logo/logo.jpeg')}}" width="125" height="120" style="display: block; border: 0px;" />
                         </td>
                     </tr>
                 </table>
@@ -131,8 +149,8 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <p style="margin: 0;">Here is your code copy and paste it in the confirmation box</p></br>
-                            <h2 style="text-align: center;">{{$code}}</h2>
+                            <p style="margin: 0;">Click the link below to verification your account: </p></br>
+                            <a href="{{ url('user_verification/'.md5($user_id).'/'.$code) }}" class="button">Verify Email</a>
                         </td>
                     </tr>
                 </table>
@@ -144,7 +162,7 @@
                     <tr>
                         <td bgcolor="#bbdaf5" align="center" style="padding: 30px 30px 30px 30px; border-radius: 4px 4px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
                             <h2 style="font-size: 20px; font-weight: 400; color: #111111; margin: 0;">Need more help?</h2>
-                            <p style="margin: 0;"><a href="#" target="_blank" style="color: #FFA73B;">We&rsquo;re here to help you out</a></p>
+                            <p style="margin: 0;"><a href="#" target="_blank" style="color: #0e65b2;">We&rsquo;re here to help you out</a></p>
                         </td>
                     </tr>
                 </table>

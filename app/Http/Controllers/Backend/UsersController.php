@@ -61,6 +61,7 @@ class UsersController extends Controller
             foreach ($AllPostData['user_email'] as $key => $value) {
 
                 $package_id = $AllPostData['user_package'][$key];
+
                 // user create 
                 $verification_code = mt_rand(1000, 9999);
 
@@ -76,11 +77,8 @@ class UsersController extends Controller
                     'verification_code' => $verification_code,
                 ]);
 
-                //send email for customers password
-                $this->sendMail(['name' => $AllPostData['user_name'][$key],'subject' => 'Email Verification','email' => $value,'password'=>$password],2);
-
                 //send email for customers verification
-                $this->sendMail(['name' => $AllPostData['user_name'][$key],'subject' => 'Email Verification','email' => $value,'code' => $verification_code],1);
+                $this->sendMail(['name' => $AllPostData['user_name'][$key],'subject' => 'Email Verification','email' => $value,'code' => $verification_code,'user_id'=>$user->id],1);
 
                 if(!empty($package_id)) {
                     if((int)$package_id !== -1)  {
@@ -152,7 +150,7 @@ class UsersController extends Controller
 
                 $message->to($data['email'], $data['name'])->subject($data['subject']);
 
-                $message->from('no_reply@corespl.com', 'Email Verification');
+                $message->from('no_reply@corespl.com',$data['subject']);
 
             });
         }else if($type == 2) { 
@@ -160,10 +158,37 @@ class UsersController extends Controller
 
                 $message->to($data['email'], $data['name'])->subject($data['subject']);
 
-                $message->from('no_reply@corespl.com', 'Email Verification');
+                $message->from('no_reply@corespl.com',$data['subject']);
 
             });
         }
+    }
+
+    public function verifyUser($id,$code)
+    {
+        $user = User::whereRaw('md5(id) = "'.$id.'"')->where('verification_code',$code)->first();
+        $msg = '';
+        if($user)
+        {
+            if($user->email_verified_at) {
+                
+                $msg = 'Your email already verified!';
+
+            } else {
+
+                $password = $this->randomPassword();
+                $user->password = Hash::make($password);
+                $user->email_verified_at = date('Y-m-d H:i:s');
+                $user->update();
+                
+                //send email for customers password
+                $this->sendMail(['name' => $user->name,'subject' => 'Email One time Password','email' => $user->email,'password'=>$password],2);
+
+                $msg = 'User email verification successfully';
+            }
+        }
+
+        return redirect()->route('login')->with('message',$msg);
     }
 
     protected function randomPassword() {

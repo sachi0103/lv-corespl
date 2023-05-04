@@ -64,6 +64,9 @@ Route::get('/welcome/{id}', [App\Http\Controllers\Backend\DashboardController::c
 Route::get('/contactus', [App\Http\Controllers\AuthController::class, 'contact_us'])->name('contactus');
 Route::post('/contactus/save', [App\Http\Controllers\AuthController::class, 'contact_us'])->name('contactus.save');
 Route::post('/authenticate', [App\Http\Controllers\AuthController::class, 'authenticate'])->name('authenticate');
+
+Route::get('/user_verification/{id}/{cid}', [UsersController::class, 'verifyUser'])->name('user.verification');
+    
 Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(function () {
 
     Route::get('/profile', [App\Http\Controllers\AuthController::class, 'profile'])->name('user.profile');
@@ -109,7 +112,7 @@ Route::prefix('/call-recall')->middleware('auth')->name('admin.')->group(functio
     Route::get('/users/edit/{id}', [UsersController::class, 'edit'])->name('users.edit');
     Route::post('/users/update', [UsersController::class, 'update'])->name('users.update');
     Route::get('/users/removed/{id}', [UsersController::class, 'destory'])->name('users.destory');
-    
+
     Route::post('/users/reassignPackage', [UsersController::class, 'reassignPackage'])->name('users.reassignPackage');
 
     Route::resource('/packages', PackagesController::class);
